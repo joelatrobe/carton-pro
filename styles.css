@@ -519,16 +519,6 @@ section { position: relative; }
   .band--mill .cell:hover { border-color: var(--navy); }
 }
 
-.cell__no {
-  font-family: var(--font-brand);
-  font-size: 2.9rem;
-  line-height: 1;
-  color: var(--navy-10);
-  display: block;
-  margin-bottom: 1.15rem;
-  transition: color 0.32s var(--ease);
-  letter-spacing: -0.03em;
-}
 
 .cell h3 { font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.6rem); margin-bottom: 0.85rem; }
 .cell p { color: var(--navy-70); font-size: 1rem; margin-bottom: 0; }
@@ -619,6 +609,13 @@ section { position: relative; }
 }
 .datalist__key { font-size: 1rem; color: var(--navy-70); }
 .datalist__val { font-family: var(--font-brand); font-size: 1.05rem; color: var(--navy); text-align: right; }
+
+/* Two columns cramp badly under ~520px: the key wraps and the right-aligned
+   value stacks against it. Below that the row stacks and both go left. */
+@media (max-width: 520px) {
+  .datalist__row { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+  .datalist__val { text-align: left; }
+}
 
 .band--navy .datalist, .band--deep .datalist { border-top-color: var(--pale); }
 .band--navy .datalist__row, .band--deep .datalist__row { border-bottom: var(--rule-dark); }
