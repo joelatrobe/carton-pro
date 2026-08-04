@@ -1,0 +1,122 @@
+/* Carton-Pro — navigation, sticky masthead, reveal on scroll, enquiry form */
+
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------ sticky header */
+  var masthead = document.querySelector('.masthead');
+  if (masthead) {
+    var setStuck = function () {
+      masthead.setAttribute('data-stuck', String(window.scrollY > 40));
+    };
+    setStuck();
+    window.addEventListener('scroll', setStuck, { passive: true });
+  }
+
+  /* -------------------------------------------------- mobile navigation */
+  var toggle = document.querySelector('.nav-toggle');
+  var nav = document.getElementById('primary-nav');
+
+  function closeNav() {
+    if (!nav || !toggle) return;
+    nav.setAttribute('data-open', 'false');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.textContent = 'Menu';
+    document.body.style.overflow = '';
+  }
+
+  if (toggle && nav) {
+    toggle.addEventListener('click', function () {
+      var open = nav.getAttribute('data-open') === 'true';
+      if (open) {
+        closeNav();
+      } else {
+        nav.setAttribute('data-open', 'true');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.textContent = 'Close';
+        masthead.setAttribute('data-stuck', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.getAttribute('data-open') === 'true') {
+        closeNav();
+        toggle.focus();
+      }
+    });
+  }
+
+  /* ------------------------------------------------------ reveal blocks */
+  var reveals = document.querySelectorAll('.reveal');
+
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.forEach.call(reveals, function (el) { el.classList.add('is-in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+
+    Array.prototype.forEach.call(reveals, function (el) { io.observe(el); });
+  }
+
+  /* ------------------------------------------------------- enquiry form */
+  var form = document.getElementById('enquiry-form');
+  if (!form) return;
+
+  var status = document.getElementById('form-status');
+  var submit = form.querySelector('button[type="submit"]');
+
+  function setStatus(state, message) {
+    if (!status) return;
+    status.setAttribute('data-state', state);
+    status.textContent = message;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Honeypot: silently accept and stop.
+    if (form.querySelector('[name="company_website"]').value !== '') {
+      setStatus('ok', 'Thank you. Your enquiry has been sent.');
+      form.reset();
+      return;
+    }
+
+    var data = {};
+    new FormData(form).forEach(function (value, key) { data[key] = value; });
+
+    submit.disabled = true;
+    var original = submit.textContent;
+    submit.textContent = 'Sending';
+    setStatus('', '');
+
+    fetch('/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+      .then(function (res) {
+        return res.json().then(function (body) {
+          if (!res.ok) throw new Error(body.error || 'Something went wrong.');
+          return body;
+        });
+      })
+      .then(function () {
+        form.reset();
+        setStatus('ok', 'Thank you. Your enquiry is with our team and we will come back to you within one working day.');
+      })
+      .catch(function (err) {
+        setStatus('error', err.message + ' Please call 01733 308000 or email enquiries@rhoward.co.uk.');
+      })
+      .finally(function () {
+        submit.disabled = false;
+        submit.textContent = original;
+      });
+  });
+})();

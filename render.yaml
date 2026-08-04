@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: carton-pro
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ENQUIRY_TO
+        value: enquiries@rhoward.co.uk
+      # Set these in the Render dashboard to enable enquiry emails.
+      # Without them, enquiries are logged to data/enquiries.json only.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: ENQUIRY_FROM
+        sync: false
