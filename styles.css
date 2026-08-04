@@ -116,7 +116,34 @@ section { position: relative; }
 .band--deep { background: var(--navy-deep); color: var(--pale); }
 .band--deep h2, .band--deep h3 { color: var(--white); }
 
-.band--mill { background: var(--mill); }
+/* Mill White carrying a fine cutting-mat grid, the surface a die line gets
+   drawn on. 20mm squares at 3.5% navy: felt, not seen. */
+.band--mill {
+  background-color: var(--mill);
+  background-image:
+    repeating-linear-gradient(to right, rgba(20,36,76,0.026) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(to bottom, rgba(20,36,76,0.026) 0 1px, transparent 1px 84px);
+  background-position: center;
+}
+
+/* Registration crosshairs, as they sit outside the trim on a real press
+   sheet. Decorative, hidden from assistive tech, gone on small screens. */
+.band--navy { position: relative; overflow: clip; }
+.band--navy::before,
+.band--navy::after {
+  content: "";
+  position: absolute;
+  width: 34px; height: 34px;
+  background:
+    linear-gradient(to right, transparent 0 16px, rgba(183,198,222,0.42) 16px 18px, transparent 18px 100%),
+    linear-gradient(to bottom, transparent 0 16px, rgba(183,198,222,0.42) 16px 18px, transparent 18px 100%);
+  border: 1px solid rgba(183,198,222,0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.band--navy::before { top: 2.25rem; right: 2.25rem; }
+.band--navy::after { bottom: 2.25rem; left: 2.25rem; }
+@media (max-width: 900px) { .band--navy::before, .band--navy::after { display: none; } }
 
 /* Tracked-out label — Barmeno Medium, 160 tracking (3.2) */
 .label {
@@ -150,9 +177,9 @@ section { position: relative; }
   text-wrap: balance;
 }
 .headline {
-  font-size: clamp(2.15rem, 1.2rem + 3.8vw, 4.5rem);
-  line-height: 0.98;
-  letter-spacing: -0.024em;
+  font-size: clamp(2.3rem, 1.15rem + 4.6vw, 5.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.032em;
   text-wrap: balance;
 }
 .subhead {
@@ -487,43 +514,57 @@ section { position: relative; }
 
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(2.5rem, 6vw, 7rem);
+  grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
+  gap: clamp(2.5rem, 7vw, 8.5rem);
   align-items: start;
 }
-@media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+/* The heading holds while its copy scrolls past, which is what makes the
+   asymmetry read as deliberate rather than as a narrow column. */
+@media (min-width: 901px) {
+  .split > *:first-child { position: sticky; top: 140px; }
+}
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 1.75rem; } }
 
 .stack > * + * { margin-top: 1.6rem; }
 
 /* --------------------------------------------------------------- cards -- */
+/* Entries on a press sheet, not boxes. A hairline rule holds the top of each
+   one and draws across in full navy on hover. */
 
-.grid { display: grid; gap: clamp(1rem, 1.6vw, 1.5rem); }
+.grid { display: grid; column-gap: clamp(2rem, 4.5vw, 5rem); row-gap: clamp(2.75rem, 5vw, 4.5rem); }
 .grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 940px) { .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .grid--3, .grid--2 { grid-template-columns: 1fr; } }
 
 .cell {
-  background: var(--white);
-  border: var(--rule);
-  padding: clamp(1.85rem, 2.6vw, 2.75rem);
   position: relative;
-  transition: transform 0.32s var(--ease-out), border-color 0.32s var(--ease), box-shadow 0.32s var(--ease);
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--navy-30);
+}
+.cell::after {
+  content: "";
+  position: absolute; top: -1px; left: 0;
+  width: 100%; height: 2px;
+  background: var(--navy);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .cell:hover { transform: translateY(-5px); border-color: var(--navy); }
-    }
-
-.band--mill .cell { background: var(--white); border-color: transparent; }
-@media (hover: hover) and (pointer: fine) {
-  .band--mill .cell:hover { border-color: var(--navy); }
+  .cell:hover::after { transform: scaleX(1); }
+  .cell:hover .dieline { color: var(--navy); }
 }
+.band--navy .cell { border-top-color: rgba(183, 198, 222, 0.35); }
+.band--navy .cell::after { background: var(--pale); }
 
-
-.cell h3 { font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.6rem); margin-bottom: 0.85rem; }
-.cell p { color: var(--navy-70); font-size: 1rem; margin-bottom: 0; }
-
-/* Sub-range colour used exactly as the guidelines permit: a bar, a tab, a rule */
+.cell h3 {
+  font-size: clamp(1.45rem, 1.15rem + 1.15vw, 2.1rem);
+  margin-bottom: 0.9rem;
+  letter-spacing: -0.02em;
+}
+.cell p { color: var(--navy-70); font-size: 1.02rem; margin-bottom: 0; max-width: 40ch; }
+.band--navy .cell p { color: var(--pale); }
 
 /* -------------------------------------------------------- process list -- */
 
