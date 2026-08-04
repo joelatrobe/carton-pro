@@ -456,7 +456,7 @@ section { position: relative; }
 .btn--ghost:hover { background: var(--navy); color: var(--white); }
 
 .btn--ghost-on-navy { background: transparent; border-color: rgba(183, 198, 222, 0.5); color: var(--white); }
-.btn--ghost-on-navy:hover { background: var(--white); border-color: var(--white); color: var(--navy); }
+.btn--ghost-on-navy:hover { background: var(--pale); border-color: var(--pale); color: var(--navy); }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
 
