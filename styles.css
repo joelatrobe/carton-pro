@@ -335,7 +335,11 @@ section { position: relative; }
   min-height: 88px;
   padding-block: 1rem;
 }
-.masthead .lockup { --wordmark: 1.55rem; }
+/* Guideline 3.2 sets a 14px screen minimum for any type, legal lines
+   included. The endorsement is locked to 0.275 of the wordmark by 1.1, so
+   the only way to lift R HOWARD is to grow the whole lockup. Sized to the
+   largest the header bar and the footer column will take. */
+.masthead .lockup { --wordmark: clamp(1.9rem, 1.5rem + 1.1vw, 2.05rem); }
 
 .nav { display: flex; align-items: center; gap: clamp(1.25rem, 2.4vw, 2.75rem); }
 
@@ -891,6 +895,7 @@ section { position: relative; }
 .foot li + li { margin-top: 0.7rem; }
 .foot a { color: var(--navy-30); text-decoration: none; transition: color 0.18s var(--ease); }
 .foot a:hover { color: var(--white); }
+.foot .lockup { --wordmark: 2.5rem; }
 .foot__blurb { color: var(--navy-30); max-width: 34ch; margin-top: 1.6rem; }
 
 .social { display: flex; align-items: center; gap: 0.85rem; margin-top: 1.75rem; list-style: none; padding: 0; }
