@@ -772,7 +772,7 @@ section { position: relative; }
 
 /* -------------------------------------------------------------- footer -- */
 
-.foot { background: var(--press-black); color: var(--navy-30); padding-block: clamp(3.5rem, 6vw, 5rem) 2rem; font-size: 0.97rem; }
+.foot { background: var(--navy); color: var(--navy-30); padding-block: clamp(3.5rem, 6vw, 5rem) 2rem; font-size: 0.97rem; }
 
 .foot__top {
   display: grid; grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
