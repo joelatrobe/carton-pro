@@ -687,9 +687,12 @@ section { position: relative; }
 .dieline {
   display: block;
   width: 100%;
+  /* The set is drawn at three tiers. Capping at 190px keeps us in the 200px
+     tier, the one drawn with every crease showing. */
   max-width: 190px;
   height: auto;
-  color: var(--navy-50);
+  overflow: visible;
+  color: var(--navy-70);
   margin-bottom: 1.5rem;
   transition: color 0.32s var(--ease);
 }
