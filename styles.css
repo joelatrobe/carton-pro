@@ -130,22 +130,104 @@ section { position: relative; }
   background-position: center;
 }
 
-/* Crop marks. Two hairlines meeting at a corner with a gap at the vertex,
-   which is how a trim corner is actually marked up on a press sheet. */
+/* ------------------------------------------------------- press marks -- */
+/* The margin of a press sheet, borrowed properly: crop marks at all four
+   trim corners, a colour slug up the edge, a star target for dot gain, and
+   a density ladder along the footer. All of it decorative, all of it hidden
+   from assistive tech and dropped below 900px where the margin disappears. */
+
+:root { --mark: rgba(183, 198, 222, 0.42); --mark-ink: rgba(20, 36, 76, 0.3); }
+
 .band--navy { position: relative; overflow: clip; }
-.band--navy::before, .band--navy::after {
+
+/* Four crop marks. Two hairlines per corner, offset so they never meet at
+   the vertex, exactly as a trim corner is marked. */
+.band--navy::before {
   content: "";
   position: absolute;
-  width: 30px; height: 30px;
+  inset: 2.25rem;
   pointer-events: none;
   background:
-    linear-gradient(rgba(183,198,222,0.45) 0 0) no-repeat 0 9px / 1px 21px,
-    linear-gradient(rgba(183,198,222,0.45) 0 0) no-repeat 9px 0 / 21px 1px;
+    linear-gradient(var(--mark) 0 0) no-repeat left 0 top 10px / 1px 22px,
+    linear-gradient(var(--mark) 0 0) no-repeat left 10px top 0 / 22px 1px,
+    linear-gradient(var(--mark) 0 0) no-repeat right 0 top 10px / 1px 22px,
+    linear-gradient(var(--mark) 0 0) no-repeat right 10px top 0 / 22px 1px,
+    linear-gradient(var(--mark) 0 0) no-repeat left 0 bottom 10px / 1px 22px,
+    linear-gradient(var(--mark) 0 0) no-repeat left 10px bottom 0 / 22px 1px,
+    linear-gradient(var(--mark) 0 0) no-repeat right 0 bottom 10px / 1px 22px,
+    linear-gradient(var(--mark) 0 0) no-repeat right 10px bottom 0 / 22px 1px;
 }
-.band--navy::before { top: 2.25rem; left: 2.25rem; }
-.band--navy::after { bottom: 2.25rem; right: 2.25rem; transform: rotate(180deg); }
+
+/* Colour slug, the ink name printed up the trim edge. Straight off the
+   brand book: Carton Navy is Pantone 2767 C. */
+.band--navy::after {
+  content: "CARTON NAVY · PANTONE 2767 C";
+  position: absolute;
+  right: 1.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-family: var(--font-brand);
+  font-size: 0.6rem;
+  letter-spacing: 0.34em;
+  color: var(--mark);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Star target. A real one is a radial wedge burst used to read dot gain,
+   which is precisely what a repeating conic gradient draws. */
+.page-head { position: relative; }
+.page-head::before {
+  content: "";
+  position: absolute;
+  right: 2.5rem; bottom: 2.5rem;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(var(--mark) 0 7.5deg, transparent 7.5deg 15deg);
+  -webkit-mask: radial-gradient(circle, #000 96%, transparent 97%);
+  mask: radial-gradient(circle, #000 96%, transparent 97%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Density ladder across the head of the footer, the control strip a printer
+   reads to check ink weight. Runs the permitted tints of Carton Navy (2.3). */
+.foot { position: relative; }
+.foot::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  /* A clean density ramp, light to dark, seven patches. */
+  background: linear-gradient(to right,
+    var(--white)       0 14.2857%,
+    var(--pale)        14.2857% 28.5714%,
+    var(--navy-30)     28.5714% 42.8571%,
+    var(--navy-50)     42.8571% 57.1428%,
+    var(--navy-70)     57.1428% 71.4285%,
+    var(--navy)        71.4285% 85.7142%,
+    var(--press-black) 85.7142% 100%);
+}
+
+/* Fold ticks on the mill bands, the dashed marks that say where a sheet
+   creases. */
+.band--mill { position: relative; }
+.band--mill::before, .band--mill::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: repeating-linear-gradient(to bottom, var(--mark-ink) 0 6px, transparent 6px 14px);
+  pointer-events: none;
+}
+.band--mill::before { left: 2.25rem; }
+.band--mill::after { right: 2.25rem; }
+
 @media (max-width: 900px) {
-  .band--navy::before, .band--navy::after { display: none; }
+  .band--navy::before, .band--navy::after,
+  .page-head::before,
+  .band--mill::before, .band--mill::after { display: none; }
 }
 
 /* Tracked-out label — Barmeno Medium, 160 tracking (3.2) */
