@@ -15,7 +15,6 @@
 :root {
   /* Core palette (2.1) */
   --navy: #14244C;
-  --navy-deep: #0C1735;
   --pale: #B7C6DE;
   --mill: #EDF0F3;
   --press-black: #191C26;
@@ -48,7 +47,12 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* The canvas, seen only when the scroll rubber-bands past either end. */
+  background: var(--navy);
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -113,7 +117,7 @@ section { position: relative; }
 .band--navy { background: var(--navy); color: var(--pale); }
 .band--navy h1, .band--navy h2, .band--navy h3, .band--navy h4 { color: var(--white); }
 
-.band--deep { background: var(--navy-deep); color: var(--pale); }
+.band--deep { background: var(--press-black); color: var(--pale); }
 .band--deep h2, .band--deep h3 { color: var(--white); }
 
 /* Mill White carrying a fine cutting-mat grid, the surface a die line gets
@@ -126,24 +130,23 @@ section { position: relative; }
   background-position: center;
 }
 
-/* Registration crosshairs, as they sit outside the trim on a real press
-   sheet. Decorative, hidden from assistive tech, gone on small screens. */
+/* Crop marks. Two hairlines meeting at a corner with a gap at the vertex,
+   which is how a trim corner is actually marked up on a press sheet. */
 .band--navy { position: relative; overflow: clip; }
-.band--navy::before,
-.band--navy::after {
+.band--navy::before, .band--navy::after {
   content: "";
   position: absolute;
-  width: 34px; height: 34px;
-  background:
-    linear-gradient(to right, transparent 0 16px, rgba(183,198,222,0.42) 16px 18px, transparent 18px 100%),
-    linear-gradient(to bottom, transparent 0 16px, rgba(183,198,222,0.42) 16px 18px, transparent 18px 100%);
-  border: 1px solid rgba(183,198,222,0.22);
-  border-radius: 50%;
+  width: 30px; height: 30px;
   pointer-events: none;
+  background:
+    linear-gradient(rgba(183,198,222,0.45) 0 0) no-repeat 0 9px / 1px 21px,
+    linear-gradient(rgba(183,198,222,0.45) 0 0) no-repeat 9px 0 / 21px 1px;
 }
-.band--navy::before { top: 2.25rem; right: 2.25rem; }
-.band--navy::after { bottom: 2.25rem; left: 2.25rem; }
-@media (max-width: 900px) { .band--navy::before, .band--navy::after { display: none; } }
+.band--navy::before { top: 2.25rem; left: 2.25rem; }
+.band--navy::after { bottom: 2.25rem; right: 2.25rem; transform: rotate(180deg); }
+@media (max-width: 900px) {
+  .band--navy::before, .band--navy::after { display: none; }
+}
 
 /* Tracked-out label — Barmeno Medium, 160 tracking (3.2) */
 .label {
@@ -237,7 +240,7 @@ section { position: relative; }
   border-bottom: 1px solid transparent;
 }
 .masthead[data-stuck="true"] {
-  background: rgba(12, 23, 53, 0.94);
+  background: rgba(20, 36, 76, 0.94);
   backdrop-filter: blur(10px);
   border-bottom-color: rgba(183, 198, 222, 0.16);
 }
@@ -321,7 +324,7 @@ section { position: relative; }
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    background: var(--navy-deep);
+    background: var(--navy);
     border-bottom: var(--rule-dark);
     padding: 0.5rem var(--gutter) 1.75rem;
     display: none;
@@ -358,9 +361,9 @@ section { position: relative; }
 .btn:hover { background: var(--press-black); border-color: var(--press-black); }
 /* Instant press feedback without touching the footprint, since these buttons
    are required to hold one size at rest, on hover and on press. */
-.btn:active { background: var(--navy-deep); border-color: var(--navy-deep); }
+.btn:active { background: var(--press-black); border-color: var(--press-black); }
 .btn--light:active { background: var(--navy-30); border-color: var(--navy-30); }
-.btn--ghost:active { background: var(--navy-deep); border-color: var(--navy-deep); color: var(--white); }
+.btn--ghost:active { background: var(--press-black); border-color: var(--press-black); color: var(--white); }
 .btn--ghost-on-navy:active { background: var(--pale); border-color: var(--pale); color: var(--navy); }
 
 /* Primary action where the panel behind it is already navy */
@@ -399,7 +402,7 @@ section { position: relative; }
   min-height: 100svh;
   display: flex;
   align-items: flex-end;
-  background: var(--navy-deep);
+  background: var(--navy);
   color: var(--white);
   overflow: hidden;
   isolation: isolate;
@@ -411,7 +414,7 @@ section { position: relative; }
 .hero__scrim {
   position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(to top, rgba(12, 23, 53, 0.95) 0%, rgba(12, 23, 53, 0.55) 45%, rgba(12, 23, 53, 0.35) 100%);
+    linear-gradient(to top, rgba(20, 36, 76, 0.95) 0%, rgba(20, 36, 76, 0.55) 45%, rgba(20, 36, 76, 0.35) 100%);
 }
 
 .hero__inner { padding-block: clamp(7rem, 12vw, 9rem) clamp(3rem, 5vw, 4.5rem); width: 100%; }
@@ -431,7 +434,7 @@ section { position: relative; }
 .hero--light {
   align-items: center;
   text-align: center;
-  background-color: #DCE4F0;
+  background-color: var(--mill);
   background-image: url('assets/img/hero-cartons.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -494,7 +497,7 @@ section { position: relative; }
 /* -------------------------------------------------------- page heading -- */
 
 .page-head {
-  background: var(--navy-deep);
+  background: var(--navy);
   color: var(--pale);
   padding-block: clamp(9rem, 16vw, 14rem) clamp(3.5rem, 7vw, 6.5rem);
   position: relative;
@@ -505,7 +508,7 @@ section { position: relative; }
 .page-head__media img, .page-head__media video { width: 100%; height: 100%; object-fit: cover; }
 .page-head::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(to top, rgba(12,23,53,0.96) 0%, rgba(12,23,53,0.72) 100%);
+  background: linear-gradient(to top, rgba(20, 36, 76,0.96) 0%, rgba(20, 36, 76,0.72) 100%);
 }
 .page-head .headline { color: var(--white); }
 .page-head .standfirst { margin-top: 1.75rem; color: var(--pale); }
@@ -699,7 +702,7 @@ section { position: relative; }
 }
 .media-band::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(to top, rgba(12,23,53,0.92) 0%, rgba(12,23,53,0.35) 65%, rgba(12,23,53,0.25) 100%);
+  background: linear-gradient(to top, rgba(20, 36, 76,0.92) 0%, rgba(20, 36, 76,0.35) 65%, rgba(20, 36, 76,0.25) 100%);
 }
 .media-band__caption { padding-block: clamp(2.5rem, 5vw, 4.5rem); color: var(--white); }
 
@@ -769,7 +772,7 @@ section { position: relative; }
 
 /* -------------------------------------------------------------- footer -- */
 
-.foot { background: var(--navy-deep); color: var(--navy-30); padding-block: clamp(3.5rem, 6vw, 5rem) 2rem; font-size: 0.97rem; }
+.foot { background: var(--press-black); color: var(--navy-30); padding-block: clamp(3.5rem, 6vw, 5rem) 2rem; font-size: 0.97rem; }
 
 .foot__top {
   display: grid; grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
