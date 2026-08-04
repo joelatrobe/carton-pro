@@ -586,7 +586,10 @@ section { position: relative; }
   overflow: hidden;
   isolation: isolate;
 }
-.page-head__media { position: absolute; inset: 0; z-index: -2; }
+.page-head__media {
+  position: absolute; inset: 0; z-index: -2;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+}
 .page-head__media img, .page-head__media video { width: 100%; height: 100%; object-fit: cover; }
 .page-head::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
@@ -598,14 +601,13 @@ section { position: relative; }
   background: linear-gradient(to top, rgba(20, 36, 76,0.8) 0%, rgba(20, 36, 76,0.34) 100%);
 }
 
-/* On a phone the canopy clip is 8.6 MB of mobile data for a decorative
-   background. Drop to the poster frame, which is 0.3 MB. */
+/* On a phone a header clip is 9 MB of mobile data for a decorative
+   background, so the poster frame carries it instead. Each page-head__media
+   sets its own poster as an inline background-image. */
 @media (max-width: 700px) {
-  .page-head--dark-media .page-head__media {
-    background: url('assets/img/forest-canopy-poster.jpg') center / cover no-repeat;
-  }
-  .page-head--dark-media .page-head__media video { display: none; }
+  .page-head__media video { display: none; }
 }
+
 .page-head .headline { color: var(--white); }
 .page-head .standfirst { margin-top: 1.75rem; color: var(--pale); }
 
