@@ -64,13 +64,19 @@ Taken from the guidelines PDF, section by section.
    `@font-face` rules puts the whole page on the brand face.
 3. **Barmeno web licence.** Barmeno is a Berthold face. Confirm the licence covers
    webfont embedding before the site goes public.
-4. **Favicon.** Uses the Carton Pale rule mark on navy, because the wordmark is
-   unreadable at 16 px. Worth a sign-off, or replace with a supplied mark.
+4. **Favicon** is the endorsed lockup, white out of Carton Navy, built from the master
+   outlined artwork rather than traced. `assets/logo-lockup-white.svg` holds that master
+   at full size and is the file to place wherever the logo is needed as artwork rather
+   than live text. Note that a single SVG favicon is used at every size, so at 16 px the
+   lockup reads as a navy tile. Fixable only with a multi-size ICO carrying a simplified
+   mark for 16 and 32 px.
 5. **Company number and VAT number** are not in the footer because they were not
    available. Add them to the `.foot__bottom` block on every page.
-6. **Master logo artwork.** The lockup is set in Barmeno rather than placed as the
-   outlined master artwork (1.1). If the SVG is available, swap it into the `.lockup`
-   markup for exact fidelity.
+6. **Master logo artwork** now lives at `assets/logo-lockup-white.svg`, pulled from the
+   claude.ai/design brand project. The masthead and footer lockups are still set in live
+   Barmeno text, which keeps them selectable and scalable; swap in the artwork if exact
+   fidelity to 1.1 matters more. The project also holds navy, pale and black variants,
+   plus wordmark-only and descriptor versions.
 
 ## Running locally
 
