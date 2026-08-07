@@ -97,18 +97,14 @@
         <div class="reveal">
           <h2 class="subhead">Find us</h2>
           <figure class="mapframe u-mt-l">
-            <div class="map"
-                 data-map
-                 data-map-title="Map showing R Howard, Unit D Limesquare Estate, Enterprise Way, Bretton, Peterborough PE3 8YQ"
-                 data-map-src="https://www.google.com/maps?q=Unit+D+Limesquare+Estate,+Enterprise+Way,+Bretton,+Peterborough+PE3+8YQ&amp;output=embed">
-              <div class="map__holding">
-                <span class="map__pin" aria-hidden="true"></span>
-                <p class="map__note">The map is served by Google, which sets its own cookies.</p>
-                <button type="button" class="map__load" data-map-load>Load the map</button>
-              </div>
+            <div class="map">
+              <iframe
+                title="Map showing R Howard, Unit D Limesquare Estate, Enterprise Way, Bretton, Peterborough PE3 8YQ"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-0.2954%2C52.5856%2C-0.2754%2C52.5956&amp;layer=mapnik&amp;marker=52.5906%2C-0.2854"
+                loading="lazy" referrerpolicy="no-referrer"></iframe>
             </div>
             <figcaption class="mapframe__bar">
-              <span class="mapframe__coords">52.5906&deg; N, 0.2854&deg; W</span>
+              <span class="mapframe__addr">Unit D, Limesquare Estate, Bretton</span>
               <a class="mapframe__link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Unit+D+Limesquare+Estate,+Enterprise+Way,+Bretton,+Peterborough+PE3+8YQ" target="_blank" rel="noopener">Directions <span aria-hidden="true">&rarr;</span></a>
             </figcaption>
           </figure>
@@ -148,14 +144,28 @@
         <h2 class="headline">Tell us about the job</h2>
       </div>
       <div class="reveal">
-<form id="enquiry-form" class="u-mt-l" novalidate>
+<form id="enquiry-form" class="u-mt-l" data-mode="quote" novalidate>
+          <fieldset class="switch">
+            <legend class="switch__legend">What can we help with?</legend>
+            <div class="switch__options">
+              <label class="switch__option">
+                <input type="radio" name="enquiry_type" value="Quote request" checked>
+                <span>I would like a quote</span>
+              </label>
+              <label class="switch__option">
+                <input type="radio" name="enquiry_type" value="General question">
+                <span>I just have a question</span>
+              </label>
+            </div>
+          </fieldset>
+
           <div class="form-grid">
             <div class="field">
               <label for="name">Your name</label>
               <input type="text" id="name" name="name" autocomplete="name" required>
             </div>
             <div class="field">
-              <label for="company">Company</label>
+              <label for="company">Company <span class="field__opt">optional</span></label>
               <input type="text" id="company" name="company" autocomplete="organization">
             </div>
             <div class="field">
@@ -163,11 +173,11 @@
               <input type="email" id="email" name="email" autocomplete="email" required>
             </div>
             <div class="field">
-              <label for="phone">Telephone</label>
+              <label for="phone">Telephone <span class="field__opt">optional</span></label>
               <input type="tel" id="phone" name="phone" autocomplete="tel">
             </div>
-            <div class="field">
-              <label for="sector">Sector</label>
+            <div class="field field--spec">
+              <label for="sector">Sector <span class="field__opt">optional</span></label>
               <select id="sector" name="sector">
                 <option value="">Please select</option>
                 <option>Food and drink</option>
@@ -177,8 +187,8 @@
                 <option>Other</option>
               </select>
             </div>
-            <div class="field">
-              <label for="quantity">Approximate run length</label>
+            <div class="field field--spec">
+              <label for="quantity">Approximate run length <span class="field__opt">optional</span></label>
               <select id="quantity" name="quantity">
                 <option value="">Please select</option>
                 <option>Under 1,000 units</option>
@@ -190,8 +200,11 @@
               </select>
             </div>
             <div class="field field--full">
-              <label for="message">Details of your carton or packaging requirement</label>
-              <textarea id="message" name="message" required placeholder="Dimensions, board, number of colours, finishing, deadline, anything you already know."></textarea>
+              <label for="message" data-label-quote="Details of your carton or packaging requirement" data-label-question="Your question">Details of your carton or packaging requirement</label>
+              <textarea id="message" name="message" required
+                data-ph-quote="Dimensions, board, number of colours, finishing, deadline, anything you already know."
+                data-ph-question="Ask us anything. If you are not sure what you need yet, that is fine too."
+                placeholder="Dimensions, board, number of colours, finishing, deadline, anything you already know."></textarea>
             </div>
           </div>
 

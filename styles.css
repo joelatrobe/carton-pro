@@ -867,40 +867,6 @@ section { position: relative; }
   filter: grayscale(0.35) contrast(1.04);
 }
 
-/* Holding state, shown until the visitor asks for the map. */
-.map__holding {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 1rem; padding: 1.75rem; text-align: center;
-  background:
-    linear-gradient(var(--navy-10) 1px, transparent 1px) 0 0 / 100% 34px,
-    linear-gradient(90deg, var(--navy-10) 1px, transparent 1px) 0 0 / 34px 100%,
-    var(--mill);
-}
-.map[data-loaded="true"] .map__holding { display: none; }
-
-.map__pin {
-  width: 15px; height: 15px; border-radius: 50%;
-  border: 2px solid var(--navy); position: relative;
-}
-.map__pin::after {
-  content: ""; position: absolute; inset: -9px; border-radius: 50%;
-  border: 1px solid var(--navy-30);
-}
-
-.map__note {
-  font-size: 0.86rem; color: var(--navy-70); max-width: 30ch; margin: 0;
-}
-.map__load {
-  font-family: var(--font-brand); font-size: 0.72rem;
-  letter-spacing: 0.17em; text-transform: uppercase;
-  color: var(--navy); background: transparent;
-  border: 1px solid var(--navy); border-radius: 0;
-  padding: 0.7rem 1.4rem; cursor: pointer;
-  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
-}
-.map__load:hover { background: var(--navy); color: var(--white); }
-
 .mapframe__bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding: 0.85rem 1.1rem;
@@ -908,7 +874,7 @@ section { position: relative; }
   font-family: var(--font-brand); font-size: 0.72rem;
   letter-spacing: 0.15em; text-transform: uppercase;
 }
-.mapframe__coords { color: var(--navy-30); }
+.mapframe__addr { color: var(--navy-30); text-transform: none; letter-spacing: 0.08em; }
 .mapframe__link { color: var(--white); text-decoration: none; white-space: nowrap; }
 .mapframe__link:hover { text-decoration: underline; text-underline-offset: 4px; }
 
@@ -1040,59 +1006,44 @@ section { position: relative; }
 .u-mt-l { margin-top: clamp(2.25rem, 4.5vw, 4rem); }
 .u-mb-l { margin-bottom: clamp(2.25rem, 4.5vw, 4rem); }
 
-/* ------------------------------------------------------- cookie bar -- */
-/* A small bar in the bottom left, not a takeover. It only appears because
-   the contact map is a Google embed; decline and no third party loads. */
 
-.cookiebar {
-  position: fixed;
-  left: clamp(1rem, 3vw, 2.25rem);
-  bottom: clamp(1rem, 3vw, 2.25rem);
-  z-index: 900;
-  width: min(25rem, calc(100vw - 2rem));
-  background: var(--navy);
-  color: var(--pale);
-  border: 1px solid rgba(183, 198, 222, 0.28);
-  padding: 1.15rem 1.25rem 1.1rem;
-  box-shadow: 0 18px 40px rgba(20, 36, 76, 0.28);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.26s var(--ease-out), transform 0.26s var(--ease-out);
+/* ------------------------------------------------ enquiry type switch -- */
+/* A quote and a plain question are different errands. The switch decides
+   which, and the specification fields step aside when they are not wanted. */
+
+.switch { border: 0; padding: 0; margin: 0 0 2rem; }
+.switch__legend {
+  font-family: var(--font-brand); font-size: 0.72rem;
+  letter-spacing: 0.17em; text-transform: uppercase;
+  color: var(--navy-70); padding: 0; margin-bottom: 0.85rem;
 }
-.cookiebar[data-in="true"] { opacity: 1; transform: none; }
+.switch__options { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 
-.cookiebar__text {
-  margin: 0 0 0.95rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: var(--pale);
+.switch__option { position: relative; }
+.switch__option input {
+  position: absolute; opacity: 0; width: 100%; height: 100%;
+  margin: 0; cursor: pointer;
 }
-.cookiebar__text a { color: var(--white); text-underline-offset: 3px; }
-
-.cookiebar__actions { display: flex; gap: 0.6rem; }
-
-.cookiebar__btn {
-  font-family: var(--font-brand);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 0.6rem 1.1rem;
-  border-radius: 0;
-  cursor: pointer;
-  border: 1px solid var(--white);
-  background: var(--white);
-  color: var(--navy);
-  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
+.switch__option span {
+  display: block;
+  font-family: var(--font-brand); font-size: 0.72rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--navy-70);
+  border: 1px solid var(--navy-30);
+  padding: 0.72rem 1.25rem;
+  transition: border-color 0.18s var(--ease), color 0.18s var(--ease), background-color 0.18s var(--ease);
 }
-.cookiebar__btn:hover { background: var(--pale); border-color: var(--pale); }
-
-.cookiebar__btn--quiet {
-  background: transparent;
-  color: var(--pale);
-  border-color: rgba(183, 198, 222, 0.5);
+.switch__option input:checked + span {
+  background: var(--navy); border-color: var(--navy); color: var(--white);
 }
-.cookiebar__btn--quiet:hover { background: transparent; color: var(--white); border-color: var(--white); }
+.switch__option input:focus-visible + span { outline: 2px solid var(--navy); outline-offset: 3px; }
+.switch__option input:not(:checked):hover + span { border-color: var(--navy); color: var(--navy); }
 
-@media (prefers-reduced-motion: reduce) {
-  .cookiebar { transition: none; opacity: 1; transform: none; }
+.field__opt {
+  font-size: 0.66rem; letter-spacing: 0.12em;
+  color: var(--navy-50); text-transform: uppercase;
 }
+
+/* Hidden rather than removed, so a half-filled answer survives a change of
+   mind; the submit handler clears them so nothing stale is sent. */
+form[data-mode="question"] .field--spec { display: none; }

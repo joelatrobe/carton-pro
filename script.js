@@ -76,69 +76,33 @@
      hidden now, but marking everything seen keeps the state consistent. */
   window.addEventListener('pageshow', function (e) { if (e.persisted) revealAll(); });
 
-  /* ---------------------------------------------------- cookie consent */
-  /* Nothing on this site sets a cookie except the Google map on the contact
-     page, so consent is asked for that and nothing else. The map stays
-     unloaded until it is given, which is the whole point of asking. */
-  var CONSENT_KEY = 'cp-consent';
-
-  function readConsent() {
-    try { return window.localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
-  }
-  function writeConsent(value) {
-    try { window.localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
-  }
-
-  var mapHost = document.querySelector('[data-map]');
-
-  function loadMap() {
-    if (!mapHost || mapHost.getAttribute('data-loaded') === 'true') return;
-    var frame = document.createElement('iframe');
-    frame.title = mapHost.getAttribute('data-map-title') || 'Map';
-    frame.src = mapHost.getAttribute('data-map-src');
-    frame.loading = 'lazy';
-    frame.referrerPolicy = 'no-referrer-when-downgrade';
-    mapHost.appendChild(frame);
-    mapHost.setAttribute('data-loaded', 'true');
-  }
-
-  /* Loading the map by hand is its own consent, for this page view only. */
-  var mapButton = document.querySelector('[data-map-load]');
-  if (mapButton) mapButton.addEventListener('click', loadMap);
-
-  function showConsentBar() {
-    var bar = document.createElement('div');
-    bar.className = 'cookiebar';
-    bar.setAttribute('role', 'region');
-    bar.setAttribute('aria-label', 'Cookie choice');
-    bar.innerHTML =
-      '<p class="cookiebar__text">We only use cookies to show the Google map on our contact page. ' +
-      'Nothing here follows you around the web. <a href="privacy.html">Privacy policy</a></p>' +
-      '<div class="cookiebar__actions">' +
-        '<button type="button" class="cookiebar__btn cookiebar__btn--quiet" data-consent="none">Decline</button>' +
-        '<button type="button" class="cookiebar__btn" data-consent="all">Accept all</button>' +
-      '</div>';
-    document.body.appendChild(bar);
-
-    requestAnimationFrame(function () { bar.setAttribute('data-in', 'true'); });
-
-    bar.addEventListener('click', function (e) {
-      var choice = e.target.getAttribute && e.target.getAttribute('data-consent');
-      if (!choice) return;
-      writeConsent(choice);
-      bar.removeAttribute('data-in');
-      setTimeout(function () { bar.remove(); }, 260);
-      if (choice === 'all') loadMap();
-    });
-  }
-
-  var stored = readConsent();
-  if (stored === 'all') loadMap();
-  else if (stored !== 'none') showConsentBar();
-
   /* ------------------------------------------------------- enquiry form */
   var form = document.getElementById('enquiry-form');
   if (!form) return;
+
+  /* Not every enquiry is a quote. Asking a question should not mean walking
+     past two dropdowns about board and run length, so they step aside. */
+  var typeInputs = form.querySelectorAll('input[name="enquiry_type"]');
+  var messageField = document.getElementById('message');
+  var messageLabel = form.querySelector('label[for="message"]');
+
+  function applyMode() {
+    var chosen = form.querySelector('input[name="enquiry_type"]:checked');
+    var mode = chosen && chosen.value === 'General question' ? 'question' : 'quote';
+    form.setAttribute('data-mode', mode);
+    if (messageField) {
+      messageField.placeholder = messageField.getAttribute('data-ph-' + mode) || messageField.placeholder;
+    }
+    if (messageLabel) {
+      var text = messageLabel.getAttribute('data-label-' + mode);
+      if (text) messageLabel.childNodes[0].nodeValue = text;
+    }
+  }
+
+  Array.prototype.forEach.call(typeInputs, function (input) {
+    input.addEventListener('change', applyMode);
+  });
+  applyMode();
 
   var status = document.getElementById('form-status');
   var submit = form.querySelector('button[type="submit"]');
@@ -161,6 +125,10 @@
 
     var data = {};
     new FormData(form).forEach(function (value, key) { data[key] = value; });
+    if (form.getAttribute('data-mode') === 'question') {
+      data.sector = '';
+      data.quantity = '';
+    }
 
     submit.disabled = true;
     var original = submit.textContent;

@@ -14,10 +14,66 @@ app.use(express.json({ limit: '64kb' }));
 
 /* ------------------------------------------------------------- security */
 
+app.disable('x-powered-by');
+
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self'",
+  /* The pages carry an inline class-flag script and JSON-LD blocks, and the
+     page heads set their poster as an inline style. No user input is ever
+     rendered into markup, so inline is not an injection route here. */
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "img-src 'self' data: https://*.tile.openstreetmap.org",
+  "media-src 'self'",
+  "frame-src https://www.openstreetmap.org",
+  "connect-src 'self'",
+  'upgrade-insecure-requests'
+].join('; ');
+
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', CSP);
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), interest-cohort=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  if (IS_PROD) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  next();
+});
+
+/* --------------------------------------------------------- private paths */
+/* express.static is pointed at the project root, so everything that is not
+   the website itself has to be refused explicitly. Without this the repo,
+   the server source and the dependency manifest are all downloadable. */
+
+const PRIVATE = [
+  /^\/\./,                      // dotfiles and dot directories, .git included
+  /^\/data(\/|$)/,
+  /^\/docs(\/|$)/,
+  /^\/node_modules(\/|$)/,
+  /^\/server\.js$/,
+  /^\/package(-lock)?\.json$/,
+  /^\/render\.yaml$/,
+  /\.(md|log|bak|sh|yml|yaml)$/i
+];
+
+app.use((req, res, next) => {
+  let pathname;
+  try {
+    pathname = decodeURIComponent(req.path);
+  } catch (err) {
+    return res.status(400).send('Bad request');
+  }
+  if (PRIVATE.some((rule) => rule.test(pathname))) {
+    return res.status(404).sendFile(path.join(__dirname, '404.html'));
+  }
   next();
 });
 
@@ -25,16 +81,26 @@ app.use((req, res, next) => {
 
 app.use(express.static(__dirname, {
   extensions: ['html'],
+  dotfiles: 'deny',
+  index: 'index.html',
   setHeaders(res, filePath) {
     if (/\.(woff2|mp4|jpg|png|svg)$/.test(filePath)) {
+      /* Fingerprinted or stable assets; when one really changes it is given
+         a new filename rather than a new cache policy. */
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (/\.(html|css|js)$/.test(filePath)) {
+      /* Markup, styles and behaviour keep their names across edits, so they
+         must be revalidated or a visitor sits on yesterday's stylesheet. */
+      res.setHeader('Cache-Control', 'no-cache');
     }
   }
 }));
 
 /* ------------------------------------------------------------- enquiries */
 
-const DATA_DIR = path.join(__dirname, 'data');
+/* Enquiries hold personal data, so they are written outside the directory
+   express.static serves. DATA_DIR lets the host point this at a real disk. */
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'carton-pro-data');
 const LOG_FILE = path.join(DATA_DIR, 'enquiries.json');
 
 function appendEnquiry(entry) {
@@ -69,7 +135,16 @@ const ENQUIRY_TO = process.env.ENQUIRY_TO || 'enquiries@rhoward.co.uk';
 const ENQUIRY_FROM = process.env.ENQUIRY_FROM || 'website@rhoward.co.uk';
 
 function clean(value, max) {
-  return String(value == null ? '' : value).trim().slice(0, max || 2000);
+  return String(value == null ? '' : value)
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    .trim()
+    .slice(0, max || 2000);
+}
+
+/* Header fields must not carry line breaks either, or a crafted name could
+   append its own mail headers. */
+function cleanHeader(value, max) {
+  return clean(value, max).replace(/[\r\n]+/g, ' ');
 }
 
 /* Simple in-memory rate limit: 5 enquiries per IP per 15 minutes. */
@@ -95,9 +170,10 @@ app.post('/api/enquiry', async (req, res) => {
   }
 
   const entry = {
-    name: clean(body.name, 120),
-    company: clean(body.company, 160),
-    email: clean(body.email, 160),
+    enquiryType: cleanHeader(body.enquiry_type, 40) || 'Quote request',
+    name: cleanHeader(body.name, 120),
+    company: cleanHeader(body.company, 160),
+    email: cleanHeader(body.email, 160),
     phone: clean(body.phone, 60),
     sector: clean(body.sector, 80),
     quantity: clean(body.quantity, 80),
@@ -116,6 +192,7 @@ app.post('/api/enquiry', async (req, res) => {
 
   if (transporter) {
     const lines = [
+      `Type:     ${entry.enquiryType}`,
       `Name:     ${entry.name}`,
       `Company:  ${entry.company || 'Not given'}`,
       `Email:    ${entry.email}`,
@@ -131,7 +208,7 @@ app.post('/api/enquiry', async (req, res) => {
         to: ENQUIRY_TO,
         from: ENQUIRY_FROM,
         replyTo: entry.email,
-        subject: `Website enquiry: ${entry.name}${entry.company ? ', ' + entry.company : ''}`,
+        subject: `${entry.enquiryType}: ${entry.name}${entry.company ? ', ' + entry.company : ''}`,
         text: lines
       });
     } catch (err) {
