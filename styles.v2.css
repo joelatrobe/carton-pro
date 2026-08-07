@@ -313,18 +313,23 @@ section { position: relative; }
 
 /* -------------------------------------------------------------- header -- */
 
+/* The solid bar is the DEFAULT, and script.js clears it while the page is
+   at the top. Inverted deliberately: if the script never runs, the masthead
+   stays readable navy instead of leaving white type on whatever scrolls
+   under it. Nothing here may depend on JavaScript to stay legible. */
 .masthead {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 100;
-  background: transparent;
-  transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
-  border-bottom: 1px solid transparent;
-}
-.masthead[data-stuck="true"] {
   background: rgba(20, 36, 76, 0.94);
   backdrop-filter: blur(10px);
-  border-bottom-color: rgba(183, 198, 222, 0.16);
+  border-bottom: 1px solid rgba(183, 198, 222, 0.16);
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
+}
+.masthead[data-stuck="false"] {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
 }
 
 .masthead__inner {
