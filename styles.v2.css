@@ -224,10 +224,34 @@ section { position: relative; }
 .band--mill::before { left: 2.25rem; }
 .band--mill::after { right: 2.25rem; }
 
+/* On a phone the marks stay, just quieter: shorter arms, pulled in tight to
+   the trim, and a fainter ink. The colour slug goes, as its tracked-out
+   caption has nowhere to sit at this width. */
 @media (max-width: 900px) {
-  .band--navy::before, .band--navy::after,
-  .page-head::before,
-  .band--mill::before, .band--mill::after { display: none; }
+  .band--navy::after,
+  .band--mill::after { display: none; }
+
+  .band--navy::before {
+    inset: 1rem;
+    opacity: 0.55;
+    background:
+      linear-gradient(var(--mark) 0 0) no-repeat left 0 top 6px / 1px 13px,
+      linear-gradient(var(--mark) 0 0) no-repeat left 6px top 0 / 13px 1px,
+      linear-gradient(var(--mark) 0 0) no-repeat right 0 top 6px / 1px 13px,
+      linear-gradient(var(--mark) 0 0) no-repeat right 6px top 0 / 13px 1px,
+      linear-gradient(var(--mark) 0 0) no-repeat left 0 bottom 6px / 1px 13px,
+      linear-gradient(var(--mark) 0 0) no-repeat left 6px bottom 0 / 13px 1px,
+      linear-gradient(var(--mark) 0 0) no-repeat right 0 bottom 6px / 1px 13px,
+      linear-gradient(var(--mark) 0 0) no-repeat right 6px bottom 0 / 13px 1px;
+  }
+
+  .page-head::before {
+    right: 1.1rem; bottom: 1.1rem;
+    width: 22px; height: 22px;
+    opacity: 0.5;
+  }
+
+  .band--mill::before { opacity: 0.5; }
 }
 
 /* Tracked-out label — Barmeno Medium, 160 tracking (3.2) */
