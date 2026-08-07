@@ -929,32 +929,35 @@ section { position: relative; }
 
 /* --------------------------------------------------------------- utils -- */
 
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
-.reveal.is-in { opacity: 1; transform: none; }
+/* Content is visible by default. The hidden-then-reveal behaviour only turns
+   on once the inline head script has set .js on <html>, so if the script ever
+   fails to run the page still shows every word of its copy. */
+.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
+.js .reveal.is-in { opacity: 1; transform: none; }
 
 /* A collection reveals item by item rather than as one slab. The container
    stops animating itself so the two do not double up. */
-.grid.reveal, .accred.reveal, .faq.reveal, .process.reveal { opacity: 1; transform: none; }
-.grid.reveal > *, .accred.reveal > *, .faq.reveal > *, .process.reveal > * {
+.js .grid.reveal, .js .accred.reveal, .js .faq.reveal, .js .process.reveal { opacity: 1; transform: none; }
+.js .grid.reveal > *, .js .accred.reveal > *, .js .faq.reveal > *, .js .process.reveal > * {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
 }
-.grid.reveal.is-in > *, .accred.reveal.is-in > *,
-.faq.reveal.is-in > *, .process.reveal.is-in > * { opacity: 1; transform: none; }
-.grid.reveal.is-in > *:nth-child(2), .accred.reveal.is-in > *:nth-child(2),
-.faq.reveal.is-in > *:nth-child(2), .process.reveal.is-in > *:nth-child(2) { transition-delay: 60ms; }
-.grid.reveal.is-in > *:nth-child(3), .faq.reveal.is-in > *:nth-child(3),
-.process.reveal.is-in > *:nth-child(3) { transition-delay: 120ms; }
-.grid.reveal.is-in > *:nth-child(4), .faq.reveal.is-in > *:nth-child(4),
-.process.reveal.is-in > *:nth-child(4) { transition-delay: 180ms; }
-.grid.reveal.is-in > *:nth-child(5), .faq.reveal.is-in > *:nth-child(5),
-.process.reveal.is-in > *:nth-child(5) { transition-delay: 240ms; }
-.grid.reveal.is-in > *:nth-child(6), .faq.reveal.is-in > *:nth-child(6) { transition-delay: 300ms; }
+.js .grid.reveal.is-in > *, .js .accred.reveal.is-in > *,
+.js .faq.reveal.is-in > *, .js .process.reveal.is-in > * { opacity: 1; transform: none; }
+.js .grid.reveal.is-in > *:nth-child(2), .js .accred.reveal.is-in > *:nth-child(2),
+.js .faq.reveal.is-in > *:nth-child(2), .js .process.reveal.is-in > *:nth-child(2) { transition-delay: 60ms; }
+.js .grid.reveal.is-in > *:nth-child(3), .js .faq.reveal.is-in > *:nth-child(3),
+.js .process.reveal.is-in > *:nth-child(3) { transition-delay: 120ms; }
+.js .grid.reveal.is-in > *:nth-child(4), .js .faq.reveal.is-in > *:nth-child(4),
+.js .process.reveal.is-in > *:nth-child(4) { transition-delay: 180ms; }
+.js .grid.reveal.is-in > *:nth-child(5), .js .faq.reveal.is-in > *:nth-child(5),
+.js .process.reveal.is-in > *:nth-child(5) { transition-delay: 240ms; }
+.js .grid.reveal.is-in > *:nth-child(6), .js .faq.reveal.is-in > *:nth-child(6) { transition-delay: 300ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .grid.reveal > *, .accred.reveal > *,
-  .faq.reveal > *, .process.reveal > * { opacity: 1; transform: none; transition-delay: 0ms; }
+  .js .reveal, .js .grid.reveal > *, .js .accred.reveal > *,
+  .js .faq.reveal > *, .js .process.reveal > * { opacity: 1; transform: none; transition-delay: 0ms; }
 }
 
 .u-mt-l { margin-top: clamp(2.25rem, 4.5vw, 4rem); }

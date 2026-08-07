@@ -48,10 +48,16 @@
   }
 
   /* ------------------------------------------------------ reveal blocks */
+  /* Content is visible until <html class="js"> turns the reveal on, so every
+     path out of here has to end with the copy on screen. */
   var reveals = document.querySelectorAll('.reveal');
 
-  if (!('IntersectionObserver' in window)) {
+  function revealAll() {
     Array.prototype.forEach.call(reveals, function (el) { el.classList.add('is-in'); });
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    revealAll();
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -63,7 +69,23 @@
     }, { rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
 
     Array.prototype.forEach.call(reveals, function (el) { io.observe(el); });
+
+    /* Failsafe. If the observer has not accounted for everything within three
+       seconds, something has gone wrong and blank copy is far worse than a
+       skipped animation. */
+    setTimeout(function () {
+      var stuck = document.querySelectorAll('.reveal:not(.is-in)');
+      if (stuck.length) {
+        Array.prototype.forEach.call(stuck, function (el) {
+          if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('is-in');
+        });
+      }
+    }, 3000);
   }
+
+  /* Restoring from the back/forward cache does not re-run the observer, so
+     anything already scrolled past must be shown outright. */
+  window.addEventListener('pageshow', function (e) { if (e.persisted) revealAll(); });
 
   /* ------------------------------------------------------- enquiry form */
   var form = document.getElementById('enquiry-form');
