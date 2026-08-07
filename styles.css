@@ -838,14 +838,84 @@ section { position: relative; }
 
 /* ----------------------------------------------------------------- map -- */
 
+/* The map sits in a printed frame: corner crop marks outside the image, a
+   navy caption strip under it carrying the coordinates and a directions
+   link. Same register marks language as the bands. */
+.mapframe { position: relative; margin: 0; }
+.mapframe::before, .mapframe::after {
+  content: ""; position: absolute; width: 14px; height: 14px; pointer-events: none;
+}
+.mapframe::before {
+  top: -6px; left: -6px;
+  border-top: 1px solid var(--navy-50); border-left: 1px solid var(--navy-50);
+}
+.mapframe::after {
+  bottom: -6px; right: -6px;
+  border-bottom: 1px solid var(--navy-50); border-right: 1px solid var(--navy-50);
+}
+
 .map {
   position: relative;
   aspect-ratio: 4 / 3;
   border: 1px solid var(--navy-30);
+  border-bottom: 0;
   background: var(--mill);
+  overflow: hidden;
 }
-.map iframe { width: 100%; height: 100%; border: 0; display: block; filter: grayscale(0.25); }
+.map iframe {
+  width: 100%; height: 100%; border: 0; display: block;
+  filter: grayscale(0.35) contrast(1.04);
+}
+
+/* Holding state, shown until the visitor asks for the map. */
+.map__holding {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 1.75rem; text-align: center;
+  background:
+    linear-gradient(var(--navy-10) 1px, transparent 1px) 0 0 / 100% 34px,
+    linear-gradient(90deg, var(--navy-10) 1px, transparent 1px) 0 0 / 34px 100%,
+    var(--mill);
+}
+.map[data-loaded="true"] .map__holding { display: none; }
+
+.map__pin {
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 2px solid var(--navy); position: relative;
+}
+.map__pin::after {
+  content: ""; position: absolute; inset: -9px; border-radius: 50%;
+  border: 1px solid var(--navy-30);
+}
+
+.map__note {
+  font-size: 0.86rem; color: var(--navy-70); max-width: 30ch; margin: 0;
+}
+.map__load {
+  font-family: var(--font-brand); font-size: 0.72rem;
+  letter-spacing: 0.17em; text-transform: uppercase;
+  color: var(--navy); background: transparent;
+  border: 1px solid var(--navy); border-radius: 0;
+  padding: 0.7rem 1.4rem; cursor: pointer;
+  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
+}
+.map__load:hover { background: var(--navy); color: var(--white); }
+
+.mapframe__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.85rem 1.1rem;
+  background: var(--navy); color: var(--pale);
+  font-family: var(--font-brand); font-size: 0.72rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.mapframe__coords { color: var(--navy-30); }
+.mapframe__link { color: var(--white); text-decoration: none; white-space: nowrap; }
+.mapframe__link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
 @media (max-width: 900px) { .map { aspect-ratio: 16 / 10; } }
+@media (max-width: 420px) {
+  .mapframe__bar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
 
 /* ---------------------------------------------------------------- form -- */
 
@@ -969,3 +1039,60 @@ section { position: relative; }
 
 .u-mt-l { margin-top: clamp(2.25rem, 4.5vw, 4rem); }
 .u-mb-l { margin-bottom: clamp(2.25rem, 4.5vw, 4rem); }
+
+/* ------------------------------------------------------- cookie bar -- */
+/* A small bar in the bottom left, not a takeover. It only appears because
+   the contact map is a Google embed; decline and no third party loads. */
+
+.cookiebar {
+  position: fixed;
+  left: clamp(1rem, 3vw, 2.25rem);
+  bottom: clamp(1rem, 3vw, 2.25rem);
+  z-index: 900;
+  width: min(25rem, calc(100vw - 2rem));
+  background: var(--navy);
+  color: var(--pale);
+  border: 1px solid rgba(183, 198, 222, 0.28);
+  padding: 1.15rem 1.25rem 1.1rem;
+  box-shadow: 0 18px 40px rgba(20, 36, 76, 0.28);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.26s var(--ease-out), transform 0.26s var(--ease-out);
+}
+.cookiebar[data-in="true"] { opacity: 1; transform: none; }
+
+.cookiebar__text {
+  margin: 0 0 0.95rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--pale);
+}
+.cookiebar__text a { color: var(--white); text-underline-offset: 3px; }
+
+.cookiebar__actions { display: flex; gap: 0.6rem; }
+
+.cookiebar__btn {
+  font-family: var(--font-brand);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0;
+  cursor: pointer;
+  border: 1px solid var(--white);
+  background: var(--white);
+  color: var(--navy);
+  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
+}
+.cookiebar__btn:hover { background: var(--pale); border-color: var(--pale); }
+
+.cookiebar__btn--quiet {
+  background: transparent;
+  color: var(--pale);
+  border-color: rgba(183, 198, 222, 0.5);
+}
+.cookiebar__btn--quiet:hover { background: transparent; color: var(--white); border-color: var(--white); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cookiebar { transition: none; opacity: 1; transform: none; }
+}

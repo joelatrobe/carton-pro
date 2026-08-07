@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/barmeno-medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">
 {
@@ -83,7 +84,7 @@
     <div class="wrap">
       <div class="split">
         <div class="reveal">
-          <h2 class="subhead">Peterborough works</h2>
+          <h2 class="subhead">Peterborough Factory</h2>
           <div class="datalist u-mt-l">
             <div class="datalist__row"><span class="datalist__key">Telephone</span><a class="datalist__val" href="tel:+441733308000">01733 308000</a></div>
             <div class="datalist__row"><span class="datalist__key">Email</span><a class="datalist__val" href="mailto:enquiries@rhoward.co.uk">enquiries@rhoward.co.uk</a></div>
@@ -94,14 +95,23 @@
         </div>
 
         <div class="reveal">
-          <span class="label">Find us</span>
-          <h2 class="subhead">Bretton, Peterborough</h2>
-          <div class="map u-mt-l">
-            <iframe
-              title="Map showing R Howard, Unit D Limesquare Estate, Enterprise Way, Bretton, Peterborough PE3 8YQ"
-              src="https://www.google.com/maps?q=Unit+D+Limesquare+Estate,+Enterprise+Way,+Bretton,+Peterborough+PE3+8YQ&amp;output=embed"
-              loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
+          <h2 class="subhead">Find us</h2>
+          <figure class="mapframe u-mt-l">
+            <div class="map"
+                 data-map
+                 data-map-title="Map showing R Howard, Unit D Limesquare Estate, Enterprise Way, Bretton, Peterborough PE3 8YQ"
+                 data-map-src="https://www.google.com/maps?q=Unit+D+Limesquare+Estate,+Enterprise+Way,+Bretton,+Peterborough+PE3+8YQ&amp;output=embed">
+              <div class="map__holding">
+                <span class="map__pin" aria-hidden="true"></span>
+                <p class="map__note">The map is served by Google, which sets its own cookies.</p>
+                <button type="button" class="map__load" data-map-load>Load the map</button>
+              </div>
+            </div>
+            <figcaption class="mapframe__bar">
+              <span class="mapframe__coords">52.5906&deg; N, 0.2854&deg; W</span>
+              <a class="mapframe__link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Unit+D+Limesquare+Estate,+Enterprise+Way,+Bretton,+Peterborough+PE3+8YQ" target="_blank" rel="noopener">Directions <span aria-hidden="true">&rarr;</span></a>
+            </figcaption>
+          </figure>
           <p class="form-note">Off Enterprise Way in Bretton. Visitor parking is on site, and the trade counter is signed from the estate road.</p>
         </div>
       </div>
