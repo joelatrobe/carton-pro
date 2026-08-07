@@ -1047,3 +1047,10 @@ section { position: relative; }
 /* Hidden rather than removed, so a half-filled answer survives a change of
    mind; the submit handler clears them so nothing stale is sent. */
 form[data-mode="question"] .field--spec { display: none; }
+
+/* Headings run at a line-height below 1, so the element box stops short of
+   the descenders. Any space set after one therefore reads about 20px tighter
+   than it measures, which shows most where a heading sits directly on top of
+   a ruled grid. Give the box back the depth its ink actually occupies. */
+.u-mb-l > .headline:last-child,
+.u-mb-l > .subhead:last-child { padding-bottom: 0.24em; }
