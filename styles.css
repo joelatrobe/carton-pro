@@ -736,6 +736,10 @@ section { position: relative; }
   padding: 0.34rem 0.6rem;
 }
 
+/* Format chips on a navy panel */
+.band--navy .formats { border-top-color: rgba(183, 198, 222, 0.3); }
+.band--navy .formats li { color: var(--pale); border-color: rgba(183, 198, 222, 0.42); }
+
 /* ----------------------------------------------------------------- faq -- */
 
 .faq {
