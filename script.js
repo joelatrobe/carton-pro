@@ -70,21 +70,10 @@
 
     Array.prototype.forEach.call(reveals, function (el) { io.observe(el); });
 
-    /* Failsafe. If the observer has not accounted for everything within three
-       seconds, something has gone wrong and blank copy is far worse than a
-       skipped animation. */
-    setTimeout(function () {
-      var stuck = document.querySelectorAll('.reveal:not(.is-in)');
-      if (stuck.length) {
-        Array.prototype.forEach.call(stuck, function (el) {
-          if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('is-in');
-        });
-      }
-    }, 3000);
   }
 
-  /* Restoring from the back/forward cache does not re-run the observer, so
-     anything already scrolled past must be shown outright. */
+  /* A bfcache restore does not re-run the observer. Nothing can be stuck
+     hidden now, but marking everything seen keeps the state consistent. */
   window.addEventListener('pageshow', function (e) { if (e.persisted) revealAll(); });
 
   /* ------------------------------------------------------- enquiry form */

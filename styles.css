@@ -929,35 +929,42 @@ section { position: relative; }
 
 /* --------------------------------------------------------------- utils -- */
 
-/* Content is visible by default. The hidden-then-reveal behaviour only turns
-   on once the inline head script has set .js on <html>, so if the script ever
-   fails to run the page still shows every word of its copy. */
-.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out); }
-.js .reveal.is-in { opacity: 1; transform: none; }
+/* Scroll reveal, built so that nothing can ever be left hidden.
+   The resting state is fully visible. Adding .is-in plays an animation that
+   starts from hidden and ends at the resting state, so if the observer never
+   fires, never fires in time, or the script does not run at all, the copy is
+   simply on screen with no animation. There is no state in which an element
+   sits at opacity 0 waiting for JavaScript. */
 
-/* A collection reveals item by item rather than as one slab. The container
-   stops animating itself so the two do not double up. */
-.js .grid.reveal, .js .accred.reveal, .js .faq.reveal, .js .process.reveal { opacity: 1; transform: none; }
-.js .grid.reveal > *, .js .accred.reveal > *, .js .faq.reveal > *, .js .process.reveal > * {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+@keyframes revealIn {
+  from { opacity: 0; transform: translateY(14px); }
 }
-.js .grid.reveal.is-in > *, .js .accred.reveal.is-in > *,
-.js .faq.reveal.is-in > *, .js .process.reveal.is-in > * { opacity: 1; transform: none; }
+@keyframes revealInChild {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+.js .reveal.is-in { animation: revealIn 0.5s var(--ease-out) backwards; }
+
+/* A collection animates item by item rather than as one slab. */
+.js .grid.reveal.is-in > *,
+.js .accred.reveal.is-in > *,
+.js .faq.reveal.is-in > *,
+.js .process.reveal.is-in > * { animation: revealInChild 0.5s var(--ease-out) backwards; }
+
 .js .grid.reveal.is-in > *:nth-child(2), .js .accred.reveal.is-in > *:nth-child(2),
-.js .faq.reveal.is-in > *:nth-child(2), .js .process.reveal.is-in > *:nth-child(2) { transition-delay: 60ms; }
+.js .faq.reveal.is-in > *:nth-child(2), .js .process.reveal.is-in > *:nth-child(2) { animation-delay: 60ms; }
 .js .grid.reveal.is-in > *:nth-child(3), .js .faq.reveal.is-in > *:nth-child(3),
-.js .process.reveal.is-in > *:nth-child(3) { transition-delay: 120ms; }
+.js .process.reveal.is-in > *:nth-child(3) { animation-delay: 120ms; }
 .js .grid.reveal.is-in > *:nth-child(4), .js .faq.reveal.is-in > *:nth-child(4),
-.js .process.reveal.is-in > *:nth-child(4) { transition-delay: 180ms; }
+.js .process.reveal.is-in > *:nth-child(4) { animation-delay: 180ms; }
 .js .grid.reveal.is-in > *:nth-child(5), .js .faq.reveal.is-in > *:nth-child(5),
-.js .process.reveal.is-in > *:nth-child(5) { transition-delay: 240ms; }
-.js .grid.reveal.is-in > *:nth-child(6), .js .faq.reveal.is-in > *:nth-child(6) { transition-delay: 300ms; }
+.js .process.reveal.is-in > *:nth-child(5) { animation-delay: 240ms; }
+.js .grid.reveal.is-in > *:nth-child(6), .js .faq.reveal.is-in > *:nth-child(6) { animation-delay: 300ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal, .js .grid.reveal > *, .js .accred.reveal > *,
-  .js .faq.reveal > *, .js .process.reveal > * { opacity: 1; transform: none; transition-delay: 0ms; }
+  .js .reveal.is-in,
+  .js .grid.reveal.is-in > *, .js .accred.reveal.is-in > *,
+  .js .faq.reveal.is-in > *, .js .process.reveal.is-in > * { animation: none; }
 }
 
 .u-mt-l { margin-top: clamp(2.25rem, 4.5vw, 4rem); }
