@@ -1,0 +1,31 @@
+{
+  "name": "Carton-Pro",
+  "short_name": "Carton-Pro",
+  "icons": [
+    {
+      "src": "/favicon/png/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/png/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/png/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon/png/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#14244C",
+  "background_color": "#14244C",
+  "display": "standalone"
+}
