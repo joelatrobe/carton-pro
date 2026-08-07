@@ -28,9 +28,9 @@ const CSP = [
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: https://*.tile.openstreetmap.org",
+  "img-src 'self' data: https://maps.gstatic.com https://*.googleapis.com https://*.ggpht.com",
   "media-src 'self'",
-  "frame-src https://www.openstreetmap.org",
+  "frame-src https://www.google.com",
   "connect-src 'self'",
   'upgrade-insecure-requests'
 ].join('; ');
