@@ -1059,3 +1059,19 @@ form[data-mode="question"] .field--spec { display: none; }
    a ruled grid. Give the box back the depth its ink actually occupies. */
 .u-mb-l > .headline:last-child,
 .u-mb-l > .subhead:last-child { padding-bottom: 0.24em; }
+
+/* A ruled grid directly under an intro block read as an underline to the
+   last line of copy. Padding, not margin, so it cannot collapse away. */
+.u-mb-l + .grid,
+.u-mb-l + .process,
+.u-mb-l + .accred { padding-top: 1.15rem; }
+
+/* No single-word last lines in display and lead copy. */
+.subhead, .standfirst, .hero__stand, .pullquote, .cell h3, .accred__panel h3 {
+  text-wrap: balance;
+}
+
+/* Inside a cell the heading already has the cell's own rule above it, so a
+   second rule under it brackets the heading in lines. The chips carry their
+   own borders and need no divider. */
+.cell .formats { border-top: 0; padding-top: 0; margin-top: 1.1rem; }
