@@ -380,18 +380,48 @@ const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || '';
    dependency. 6MB of base64 is roughly a 4.5MB photograph. */
 const adminJson = express.json({ limit: '6mb' });
 
+/* Two layers. Per address, wrong guesses back off: 5 free, then a doubling
+   wait up to an hour, so a patient attacker gets a handful of tries a day.
+   Across all addresses a ceiling stops a spread-out botnet quietly grinding
+   away, at the cost of the real user waiting out a burst. */
 const loginHits = new Map();
+const GLOBAL_WINDOW = 15 * 60 * 1000;
+let globalFails = [];
+
+function penaltyMs(failures) {
+  if (failures < 5) return 0;
+  return Math.min(60 * 60 * 1000, 15000 * Math.pow(2, failures - 5));
+}
+
 function loginBlocked(ip) {
-  const now = Date.now();
-  const list = (loginHits.get(ip) || []).filter((t) => now - t < 15 * 60 * 1000);
-  loginHits.set(ip, list);
-  return list.length >= 8;
+  globalFails = globalFails.filter((t) => Date.now() - t < GLOBAL_WINDOW);
+  if (globalFails.length >= 60) return 'Too many sign-in attempts across the site. Please try again shortly.';
+
+  const rec = loginHits.get(ip);
+  if (!rec) return null;
+  if (Date.now() - rec.last > 6 * 60 * 60 * 1000) { loginHits.delete(ip); return null; }
+  const wait = penaltyMs(rec.failures) - (Date.now() - rec.last);
+  if (wait > 0) {
+    const mins = Math.ceil(wait / 60000);
+    return `Too many attempts. Try again in ${mins === 1 ? 'a minute' : mins + ' minutes'}.`;
+  }
+  return null;
 }
-function noteLogin(ip) {
-  const list = loginHits.get(ip) || [];
-  list.push(Date.now());
-  loginHits.set(ip, list);
+
+function noteFailure(ip) {
+  const rec = loginHits.get(ip) || { failures: 0, last: 0 };
+  rec.failures += 1;
+  rec.last = Date.now();
+  loginHits.set(ip, rec);
+  globalFails.push(Date.now());
+  console.warn(`Failed article-manager sign-in from ${ip} (${rec.failures} in a row)`);
 }
+
+/* Keep the map from growing without bound on a long-lived process. */
+setInterval(() => {
+  const cutoff = Date.now() - 6 * 60 * 60 * 1000;
+  loginHits.forEach((rec, ip) => { if (rec.last < cutoff) loginHits.delete(ip); });
+}, 30 * 60 * 1000).unref();
 
 function signedIn(req) {
   const jar = auth.parseCookies(req.headers.cookie);
@@ -410,12 +440,11 @@ app.post('/api/admin/login', adminJson, (req, res) => {
   if (!ADMIN_HASH) {
     return res.status(503).json({ error: 'No admin password is configured on the server yet.' });
   }
-  if (loginBlocked(req.ip)) {
-    return res.status(429).json({ error: 'Too many attempts. Try again in fifteen minutes.' });
-  }
-  noteLogin(req.ip);
+  const blocked = loginBlocked(req.ip);
+  if (blocked) return res.status(429).json({ error: blocked });
 
   if (!auth.verifyPassword((req.body || {}).password, ADMIN_HASH)) {
+    noteFailure(req.ip);
     return res.status(401).json({ error: 'That password is not right.' });
   }
 
