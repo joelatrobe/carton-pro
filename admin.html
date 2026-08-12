@@ -85,19 +85,20 @@
             <p class="form-note">Blank line for a new paragraph. <code>## </code> for a subheading, <code>- </code> for a bullet.</p>
           </div>
 
-          <div class="field" id="image-field">
-            <label for="image">Header image <span class="field__opt">optional</span></label>
-            <div class="admin-image">
-              <img id="image-preview" alt="" hidden>
-              <div>
-                <input type="file" id="image" accept="image/jpeg,image/png,image/webp">
-                <p class="form-note">JPEG, PNG or WebP, up to 4.5MB. Save the article first, then add an image.</p>
-              </div>
-            </div>
-          </div>
           <div class="field">
-            <label for="imageAlt">Image description <span class="field__opt">optional</span></label>
-            <input type="text" id="imageAlt" name="imageAlt" placeholder="Describe the picture for screen readers.">
+            <span class="admin-label">Pictures</span>
+            <p class="form-note">Add pictures here, then use <strong>Header</strong> for the one at the top of the article, or <strong>Insert</strong> to drop it where the cursor is in the text.</p>
+            <div class="admin-upload">
+              <label class="admin-upload__btn" for="image">Add a picture</label>
+              <input type="file" id="image" accept="image/jpeg,image/png,image/webp" multiple>
+              <span class="form-note" id="upload-note">JPEG, PNG or WebP. Large photographs are shrunk automatically.</span>
+            </div>
+            <div class="admin-gallery" id="gallery"></div>
+          </div>
+
+          <div class="field">
+            <label for="imageAlt">Header image description <span class="field__opt">optional</span></label>
+            <input type="text" id="imageAlt" name="imageAlt" placeholder="Describe the header picture for screen readers.">
           </div>
 
           <div class="field">

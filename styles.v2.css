@@ -1177,8 +1177,38 @@ form[data-mode="question"] .field--spec { display: none; }
 .admin-editor { border: 1px solid var(--navy-30); padding: clamp(1.25rem, 2.5vw, 2rem); }
 .admin-editor .field { margin-bottom: 1.35rem; }
 .admin-editor code { background: var(--mill); padding: 0.1rem 0.3rem; font-size: 0.92em; }
-.admin-image { display: flex; gap: 1.1rem; align-items: flex-start; flex-wrap: wrap; }
-.admin-image img { width: 11rem; height: auto; border: 1px solid var(--navy-30); display: block; }
+.admin-label { display: block; font-family: var(--font-brand); font-size: 0.72rem; letter-spacing: 0.17em; text-transform: uppercase; color: var(--navy-70); margin-bottom: 0.6rem; }
+
+.admin-upload { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 0.9rem 0 1rem; }
+.admin-upload input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.admin-upload__btn {
+  font-family: var(--font-brand); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+  border: 1px solid var(--navy); color: var(--navy); padding: 0.65rem 1.2rem; cursor: pointer;
+  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
+}
+.admin-upload__btn:hover { background: var(--navy); color: var(--white); }
+.admin-upload input[type="file"]:focus-visible + .admin-upload__btn { outline: 2px solid var(--navy); outline-offset: 3px; }
+
+.admin-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.8rem; }
+.admin-thumb { margin: 0; border: 1px solid var(--navy-30); background: var(--mill); }
+.admin-thumb.is-header { border-color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); }
+.admin-thumb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.admin-thumb figcaption { display: flex; }
+.admin-thumb figcaption button {
+  flex: 1; font-family: var(--font-brand); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--white); border: 0; border-top: 1px solid var(--navy-30); padding: 0.5rem 0.2rem; cursor: pointer; color: var(--navy);
+}
+.admin-thumb figcaption button + button { border-left: 1px solid var(--navy-30); }
+.admin-thumb figcaption button:hover { background: var(--navy); color: var(--white); }
+
+/* Pictures set inside an article body. */
+.article__figure { margin: 2.25rem 0; }
+.article__figure img { width: 100%; height: auto; display: block; border: 1px solid var(--navy-30); }
+.article__figure figcaption { font-size: 0.86rem; color: var(--navy-50); margin-top: 0.7rem; }
+
+/* Quiet way in for the client team; deliberately not in the main nav. */
+.foot__staff { color: var(--navy-50); text-decoration: none; }
+.foot__staff:hover { color: var(--pale); text-decoration: underline; text-underline-offset: 3px; }
 .admin-check { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-body); font-size: 1rem; color: var(--press-black); text-transform: none; letter-spacing: 0; }
 .admin-check input { width: auto; }
 

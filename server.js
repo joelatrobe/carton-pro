@@ -457,7 +457,7 @@ function cleanArticle(body, list, existing) {
       title,
       standfirst: String(body.standfirst || '').trim().slice(0, 400),
       body: text,
-      image: existing ? existing.image : '',
+      image: typeof body.image === 'string' ? body.image.slice(0, 200) : (existing ? existing.image : ''),
       imageAlt: String(body.imageAlt || '').trim().slice(0, 240),
       published: body.published !== false,
       date: String(body.date || '').slice(0, 10) || (existing && existing.date) || new Date().toISOString().slice(0, 10),
@@ -502,38 +502,43 @@ const IMAGE_KINDS = [
   { ext: 'webp', mime: 'image/webp', magic: [0x52, 0x49, 0x46, 0x46] }
 ];
 
-app.post('/api/admin/articles/:id/image', requireAdmin, adminJson, (req, res) => {
-  const list = store.readAll();
-  const i = list.findIndex((a) => a.id === req.params.id);
-  if (i < 0) return res.status(404).json({ error: 'That article no longer exists.' });
-
-  const dataUrl = String((req.body || {}).image || '');
-  const m = /^data:([a-z/+-]+);base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl);
-  if (!m) return res.status(400).json({ error: 'That did not look like an image file.' });
+function saveUpload(dataUrl) {
+  const m = /^data:([a-z/+-]+);base64,([A-Za-z0-9+/=]+)$/.exec(String(dataUrl || ''));
+  if (!m) return { error: 'That did not look like an image file.' };
 
   const kind = IMAGE_KINDS.find((k) => k.mime === m[1]);
-  if (!kind) return res.status(400).json({ error: 'Images must be JPEG, PNG or WebP.' });
+  if (!kind) return { error: 'Images must be JPEG, PNG or WebP.' };
 
   const buf = Buffer.from(m[2], 'base64');
-  if (buf.length > 4.5 * 1024 * 1024) return res.status(413).json({ error: 'That image is over 4.5MB. Please shrink it first.' });
+  if (buf.length > 4.5 * 1024 * 1024) return { error: 'That image is over 4.5MB. Please shrink it first.' };
   if (!kind.magic.every((b, n) => buf[n] === b)) {
-    return res.status(400).json({ error: 'That file is not really a ' + kind.ext.toUpperCase() + '.' });
+    return { error: `That file is not really a ${kind.ext.toUpperCase()}.` };
   }
 
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  const name = `${list[i].slug.slice(0, 40)}-${crypto.randomBytes(4).toString('hex')}.${kind.ext}`;
+  const name = `img-${crypto.randomBytes(6).toString('hex')}.${kind.ext}`;
   fs.writeFileSync(path.join(UPLOAD_DIR, name), buf);
+  return { url: `/uploads/${name}` };
+}
 
-  const old = list[i].image;
-  list[i].image = `/uploads/${name}`;
-  list[i].updatedAt = new Date().toISOString();
-  store.writeAll(list);
+/* Pictures belong to the site, not to one article, so they can be uploaded
+   before an article exists and reused across several. */
+app.post('/api/admin/uploads', requireAdmin, adminJson, (req, res) => {
+  const out = saveUpload((req.body || {}).image);
+  if (out.error) return res.status(400).json({ error: out.error });
+  res.json({ ok: true, url: out.url });
+});
 
-  if (old && old.startsWith('/uploads/')) {
-    const prev = path.join(UPLOAD_DIR, path.basename(old));
-    if (prev.startsWith(UPLOAD_DIR + path.sep)) fs.rm(prev, { force: true }, () => {});
-  }
-  res.json({ ok: true, image: list[i].image });
+app.get('/api/admin/uploads', requireAdmin, (req, res) => {
+  let uploads = [];
+  try {
+    uploads = fs.readdirSync(UPLOAD_DIR)
+      .filter((n) => /\.(jpg|png|webp)$/i.test(n))
+      .map((n) => ({ url: `/uploads/${n}`, at: fs.statSync(path.join(UPLOAD_DIR, n)).mtimeMs }))
+      .sort((a, b) => b.at - a.at)
+      .slice(0, 60);
+  } catch (err) { /* nothing uploaded yet */ }
+  res.json({ uploads });
 });
 
 /* ------------------------------------------------------------------ 404 */

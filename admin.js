@@ -99,6 +99,9 @@
     });
   }
 
+  var gallery = document.getElementById('gallery');
+  var headerImage = '';
+
   /* ------------------------------------------------------------- editor */
 
   function edit(a) {
@@ -111,10 +114,9 @@
     document.getElementById('date').value = a ? a.date : new Date().toISOString().slice(0, 10);
     document.getElementById('published').checked = a ? !!a.published : true;
     document.getElementById('delete').hidden = !a;
-    document.getElementById('image').disabled = !a;
 
-    var prev = document.getElementById('image-preview');
-    if (a && a.image) { prev.src = a.image; prev.hidden = false; } else { prev.removeAttribute('src'); prev.hidden = true; }
+    headerImage = a ? (a.image || '') : '';
+    loadGallery();
 
     status(document.getElementById('editor-status'), '', '');
     document.getElementById('title').focus();
@@ -134,6 +136,7 @@
       body: document.getElementById('body').value,
       imageAlt: document.getElementById('imageAlt').value,
       date: document.getElementById('date').value,
+      image: headerImage,
       published: document.getElementById('published').checked
     };
     status(el, '', 'Saving…');
@@ -143,8 +146,8 @@
 
     req.then(function (data) {
       current = data.article;
+      headerImage = data.article.image || '';
       document.getElementById('delete').hidden = false;
-      document.getElementById('image').disabled = false;
       status(el, 'ok', 'Saved. It is live at /articles/' + data.article.slug);
       return load();
     }).catch(function (err) { status(el, 'error', err.message); });
@@ -161,33 +164,96 @@
     });
   });
 
-  /* -------------------------------------------------------------- image */
+  /* -------------------------------------------------------------- images */
 
-  document.getElementById('image').addEventListener('change', function (e) {
-    var file = e.target.files && e.target.files[0];
-    if (!file || !current) return;
-    var el = document.getElementById('editor-status');
+  /* Shrink in the browser first. A phone photograph is often 6MB and four
+     thousand pixels wide; nothing on the page needs more than 1600. */
+  function downscale(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error('Could not read that file.')); };
+      reader.onload = function () {
+        var img = new Image();
+        img.onerror = function () { reject(new Error('That file is not an image we can read.')); };
+        img.onload = function () {
+          var max = 1600;
+          var scale = Math.min(1, max / Math.max(img.width, img.height));
+          if (scale === 1 && reader.result.length < 1.2e6) return resolve(reader.result);
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.width * scale);
+          c.height = Math.round(img.height * scale);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          resolve(c.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
-    if (file.size > 4.5 * 1024 * 1024) {
-      status(el, 'error', 'That image is over 4.5MB. Please shrink it first.');
-      e.target.value = '';
+  function drawGallery(list) {
+    if (!list.length) {
+      gallery.innerHTML = '<p class="form-note">No pictures yet.</p>';
+      return;
+    }
+    gallery.innerHTML = list.map(function (u) {
+      var isHeader = u.url === headerImage;
+      return '<figure class="admin-thumb' + (isHeader ? ' is-header' : '') + '" data-url="' + u.url + '">' +
+               '<img src="' + u.url + '" alt="" loading="lazy">' +
+               '<figcaption>' +
+                 '<button type="button" data-act="header">' + (isHeader ? 'Header ✓' : 'Header') + '</button>' +
+                 '<button type="button" data-act="insert">Insert</button>' +
+               '</figcaption>' +
+             '</figure>';
+    }).join('');
+  }
+
+  function loadGallery() {
+    return api('GET', '/api/admin/uploads').then(function (d) { drawGallery(d.uploads || []); })
+      .catch(function () { gallery.innerHTML = ''; });
+  }
+
+  gallery.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    var url = btn.closest('.admin-thumb').getAttribute('data-url');
+
+    if (btn.getAttribute('data-act') === 'header') {
+      headerImage = headerImage === url ? '' : url;
+      loadGallery();
+      status(document.getElementById('editor-status'), '',
+             headerImage ? 'Header picture set. Save to apply it.' : 'Header picture cleared. Save to apply it.');
       return;
     }
 
-    status(el, '', 'Uploading the image…');
-    var reader = new FileReader();
-    reader.onload = function () {
-      api('POST', '/api/admin/articles/' + current.id + '/image', { image: reader.result })
-        .then(function (data) {
-          var prev = document.getElementById('image-preview');
-          prev.src = data.image + '?v=' + Date.now();
-          prev.hidden = false;
-          current.image = data.image;
-          status(el, 'ok', 'Image added.');
-        })
-        .catch(function (err) { status(el, 'error', err.message); })
-        .finally(function () { e.target.value = ''; });
-    };
-    reader.readAsDataURL(file);
+    var ta = document.getElementById('body');
+    var at = ta.selectionStart || ta.value.length;
+    var snippet = '\n\n[image: ' + url + ' | ]\n\n';
+    ta.value = ta.value.slice(0, at) + snippet + ta.value.slice(at);
+    ta.focus();
+    /* Land the cursor after the pipe so a caption can be typed straight away. */
+    var caret = at + snippet.indexOf('| ') + 2;
+    ta.setSelectionRange(caret, caret);
+  });
+
+  document.getElementById('image').addEventListener('change', function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    var el = document.getElementById('editor-status');
+    status(el, '', 'Adding ' + files.length + (files.length === 1 ? ' picture…' : ' pictures…'));
+
+    files.reduce(function (chain, file) {
+      return chain.then(function () {
+        return downscale(file)
+          .then(function (dataUrl) { return api('POST', '/api/admin/uploads', { image: dataUrl }); })
+          .then(function (d) { if (!headerImage) headerImage = d.url; });
+      });
+    }, Promise.resolve())
+      .then(function () {
+        status(el, 'ok', 'Pictures added.');
+        return loadGallery();
+      })
+      .catch(function (err) { status(el, 'error', err.message); })
+      .finally(function () { e.target.value = ''; });
   });
 })();
