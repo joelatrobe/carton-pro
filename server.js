@@ -335,20 +335,14 @@ app.get('/articles/:slug', (req, res, next) => {
   const a = list.find((x) => x.slug === req.params.slug && x.published);
   if (!a) return next();
 
-  /* The header picture runs the full width of the page rather than sitting
-     inside the reading column, where it looked like a stamp on a wide sheet.
-     A 5:4 photograph cannot fill a wide screen without being cropped, so the
-     space either side is filled with a blurred copy of the picture itself
-     rather than a flat colour, which would show a hard seam against the
-     photograph's own gradient. The path is re-checked before it goes into a
-     CSS url(), since that is a second place a crafted value could escape. */
+  /* Sits in the reading column with the text, not bled to the page edges.
+     The path is validated rather than trusted, even though it only reaches
+     an src here. */
   const safeImage = /^\/(?:uploads|assets\/img)\/[a-z0-9][a-z0-9._-]{0,80}\.(?:jpg|png|webp)$/i.test(a.image || '')
     ? a.image
     : '';
   const hero = safeImage
-    ? `<figure class="article__hero" style="--hero-image:url('${safeImage}')">
-      <img src="${articles.escapeHtml(safeImage)}" alt="${articles.escapeHtml(a.imageAlt || '')}">
-    </figure>`
+    ? `<figure class="article__hero"><img src="${articles.escapeHtml(safeImage)}" alt="${articles.escapeHtml(a.imageAlt || '')}"></figure>`
     : '';
 
   const ld = {
@@ -382,10 +376,9 @@ app.get('/articles/:slug', (req, res, next) => {
     </div>
   </section>
 
-  ${hero}
-
   <section class="band">
     <div class="wrap wrap--narrow article">
+      ${hero}
       ${a.standfirst ? `<p class="standfirst">${articles.escapeHtml(a.standfirst)}</p>` : ''}
       ${articles.renderBody(a.body)}
       <p class="u-mt-l"><a class="arrow-link" href="/articles">All articles <span aria-hidden="true">&rarr;</span></a></p>

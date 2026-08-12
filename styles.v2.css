@@ -1179,32 +1179,8 @@ form[data-mode="question"] .field--spec { display: none; }
    would stand over 1100px tall, so the strip is capped and the image sits
    inside it complete. The field behind is set close to the dark ground of
    the photographs themselves, so the join does not read as a letterbox. */
-.article__hero {
-  margin: 0;
-  position: relative;
-  overflow: hidden;
-  background: #141826;
-}
-/* The picture again, blown up and blurred, filling the space beside itself. */
-.article__hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--hero-image) center / cover no-repeat;
-  filter: blur(38px) brightness(0.55) saturate(0.85);
-  transform: scale(1.15);
-  pointer-events: none;
-}
-.article__hero img {
-  position: relative;
-  width: 100%; display: block; border: 0;
-  max-height: min(76vh, 42rem);
-  object-fit: contain;
-}
-@media (max-width: 700px) {
-  /* Narrow enough that the natural height is no longer a problem. */
-  .article__hero img { max-height: none; }
-}
+.article__hero { margin: 0 0 2.25rem; }
+.article__hero img { width: 100%; height: auto; display: block; border: 1px solid var(--navy-30); }
 .article__list { margin: 0 0 1.35rem 1.1rem; padding: 0; color: var(--navy-70); max-width: 62ch; }
 .article__list li { margin-bottom: 0.4rem; }
 
