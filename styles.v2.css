@@ -1153,10 +1153,13 @@ form[data-mode="question"] .field--spec { display: none; }
 
 /* ------------------------------------------------------- articles -- */
 
-.posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: clamp(2rem, 4vw, 3.25rem); }
+/* Wider columns than the service cards use: an article is carried by its
+   picture, and at 19rem the picture was too small to carry anything. */
+.posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr)); gap: clamp(2.25rem, 4vw, 3.5rem); }
+@media (max-width: 620px) { .posts { grid-template-columns: 1fr; } }
 .post__link { display: block; text-decoration: none; color: inherit; }
 .post__media {
-  display: block; aspect-ratio: 3 / 2; overflow: hidden;
+  display: block; aspect-ratio: 16 / 10; overflow: hidden;
   background: var(--mill); border: 1px solid var(--navy-30); margin-bottom: 1.15rem;
 }
 .post__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ease-out); }
@@ -1172,8 +1175,12 @@ form[data-mode="question"] .field--spec { display: none; }
 .page-head--article .label a { color: inherit; }
 .article__date { font-family: var(--font-brand); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pale); margin-top: 1.1rem; }
 .article > p { max-width: 62ch; }
-.article__hero { margin: 0 0 2.25rem; }
-.article__hero img { width: 100%; height: auto; display: block; border: 1px solid var(--navy-30); }
+.article__hero { margin: 0; }
+.article__hero img {
+  width: 100%; display: block; border: 0;
+  max-height: min(72vh, 46rem);
+  object-fit: cover;
+}
 .article__list { margin: 0 0 1.35rem 1.1rem; padding: 0; color: var(--navy-70); max-width: 62ch; }
 .article__list li { margin-bottom: 0.4rem; }
 

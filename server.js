@@ -322,7 +322,7 @@ app.get(['/articles', '/articles.html'], (req, res) => {
     </div>
   </section>
 
-  <section class="band">
+  <section class="band band--tight">
     <div class="wrap">
       ${body}
     </div>
@@ -335,6 +335,8 @@ app.get('/articles/:slug', (req, res, next) => {
   const a = list.find((x) => x.slug === req.params.slug && x.published);
   if (!a) return next();
 
+  /* The header picture runs the full width of the page rather than sitting
+     inside the reading column, where it looked like a stamp on a wide sheet. */
   const hero = a.image
     ? `<figure class="article__hero"><img src="${articles.escapeHtml(a.image)}" alt="${articles.escapeHtml(a.imageAlt || '')}"></figure>`
     : '';
@@ -370,9 +372,10 @@ app.get('/articles/:slug', (req, res, next) => {
     </div>
   </section>
 
+  ${hero}
+
   <section class="band">
     <div class="wrap wrap--narrow article">
-      ${hero}
       ${a.standfirst ? `<p class="standfirst">${articles.escapeHtml(a.standfirst)}</p>` : ''}
       ${articles.renderBody(a.body)}
       <p class="u-mt-l"><a class="arrow-link" href="/articles">All articles <span aria-hidden="true">&rarr;</span></a></p>
