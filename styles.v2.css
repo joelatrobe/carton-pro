@@ -583,15 +583,27 @@ section { position: relative; }
    directly above it, with navy type. */
 .specs { background: var(--pale); }
 .specs__grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-.specs__item { padding: clamp(2rem, 3.5vw, 3.25rem) 1.6rem; border-left: 1px solid rgba(20, 36, 76, 0.18); }
+/* A column, so the keys sit on one line across all four however many lines
+   the value above them takes. */
+.specs__item {
+  padding: clamp(2rem, 3.5vw, 3.25rem) 1.6rem;
+  border-left: 1px solid rgba(20, 36, 76, 0.18);
+  display: flex;
+  flex-direction: column;
+}
 .specs__item:first-child { border-left: 0; padding-left: 0; }
+
+
 .specs__value {
   font-family: var(--font-brand);
-  font-size: clamp(1.9rem, 1.1rem + 2.6vw, 3.5rem);
+  /* Capped so the longest of the four still sets on one line; above this
+     'Seven colours' wraps and the row goes ragged. */
+  font-size: clamp(1.6rem, 0.9rem + 2.1vw, 3rem);
   color: var(--navy);
   line-height: 0.95;
   display: block;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 .specs__key {
   font-family: var(--font-brand);
@@ -599,8 +611,13 @@ section { position: relative; }
   letter-spacing: 0.17em;
   text-transform: uppercase;
   color: var(--navy);
-  margin-top: 0.9rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
   display: block;
+  /* Two lines' worth whether the caption fills them or not, so the four
+     captions start on the same line however each one wraps. */
+  line-height: 1.35;
+  min-height: calc(0.9rem + 2 * 1.35em);
 }
 @media (max-width: 860px) {
   .specs__grid { grid-template-columns: repeat(2, 1fr); }
