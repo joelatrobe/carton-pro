@@ -61,6 +61,7 @@ const PRIVATE = [
   /^\/data(\/|$)/,
   /^\/lib(\/|$)/,
   /^\/templates(\/|$)/,
+  /^\/content(\/|$)/,
   /^\/docs(\/|$)/,
   /^\/node_modules(\/|$)/,
   /^\/server\.js$/,
@@ -229,6 +230,24 @@ app.post('/api/enquiry', async (req, res) => {
 
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const store = articles.store(DATA_DIR);
+
+/* Articles live on the data disk, which starts empty on a new deployment.
+   Anything in content/seed-articles.json is written in once, so the section
+   does not go live with nothing in it. Only ever on a first run; after that
+   the disk is the truth and editors can change or delete what they like. */
+(function seedArticles() {
+  try {
+    if (fs.existsSync(store.file)) return;
+    const seed = path.join(__dirname, 'content', 'seed-articles.json');
+    if (!fs.existsSync(seed)) return;
+    const list = JSON.parse(fs.readFileSync(seed, 'utf8'));
+    if (!Array.isArray(list) || !list.length) return;
+    store.writeAll(list);
+    console.log(`Seeded ${list.length} article${list.length === 1 ? '' : 's'} on first run`);
+  } catch (err) {
+    console.error('Could not seed articles:', err.message);
+  }
+})();
 const SITE = process.env.SITE_ORIGIN || 'https://www.rhoward.co.uk';
 
 function template() {
