@@ -336,9 +336,19 @@ app.get('/articles/:slug', (req, res, next) => {
   if (!a) return next();
 
   /* The header picture runs the full width of the page rather than sitting
-     inside the reading column, where it looked like a stamp on a wide sheet. */
-  const hero = a.image
-    ? `<figure class="article__hero"><img src="${articles.escapeHtml(a.image)}" alt="${articles.escapeHtml(a.imageAlt || '')}"></figure>`
+     inside the reading column, where it looked like a stamp on a wide sheet.
+     A 5:4 photograph cannot fill a wide screen without being cropped, so the
+     space either side is filled with a blurred copy of the picture itself
+     rather than a flat colour, which would show a hard seam against the
+     photograph's own gradient. The path is re-checked before it goes into a
+     CSS url(), since that is a second place a crafted value could escape. */
+  const safeImage = /^\/(?:uploads|assets\/img)\/[a-z0-9][a-z0-9._-]{0,80}\.(?:jpg|png|webp)$/i.test(a.image || '')
+    ? a.image
+    : '';
+  const hero = safeImage
+    ? `<figure class="article__hero" style="--hero-image:url('${safeImage}')">
+      <img src="${articles.escapeHtml(safeImage)}" alt="${articles.escapeHtml(a.imageAlt || '')}">
+    </figure>`
     : '';
 
   const ld = {
