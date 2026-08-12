@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className+=" js";</script>
+<title>Article manager | Carton-Pro</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#14244C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="preload" href="/assets/fonts/barmeno-medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.v2.css">
+</head>
+<body class="admin-body">
+
+<header class="masthead" data-stuck="true">
+  <div class="wrap masthead__inner">
+    <a class="lockup lockup--reversed" href="/index.html" aria-label="Carton-Pro, R Howard, home">
+      <span class="lockup__endorse">R Howard</span>
+      <span class="lockup__word">CARTON-PRO</span>
+    </a>
+    <nav class="nav" aria-label="Admin">
+      <a href="/articles">View articles</a>
+      <button type="button" class="admin-signout" id="signout" hidden>Sign out</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="admin">
+  <div class="wrap">
+
+    <!-- Sign in -->
+    <section id="gate" hidden>
+      <div class="admin-gate">
+        <span class="label">Article manager</span>
+        <h1 class="subhead">Sign in</h1>
+        <p class="form-note" id="gate-note">Enter the shared password for the R Howard team.</p>
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+          </div>
+          <div class="btn-row">
+            <button class="btn" type="submit">Sign in</button>
+          </div>
+          <div class="form-status" id="login-status" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Manager -->
+    <section id="manager" hidden>
+      <div class="admin-head">
+        <div>
+          <span class="label">Article manager</span>
+          <h1 class="subhead" id="manager-title">Your articles</h1>
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="button" id="new-article">Write a new article</button>
+        </div>
+      </div>
+
+      <div class="admin-cols">
+        <div class="admin-list" id="list" aria-label="Articles"></div>
+
+        <form class="admin-editor" id="editor" hidden novalidate>
+          <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+          </div>
+          <div class="field">
+            <label for="standfirst">Standfirst <span class="field__opt">optional</span></label>
+            <textarea id="standfirst" name="standfirst" rows="2" placeholder="One or two sentences shown under the title and in the listing."></textarea>
+          </div>
+          <div class="field">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date">
+          </div>
+          <div class="field">
+            <label for="body">Article</label>
+            <textarea id="body" name="body" rows="16" required placeholder="A blank line starts a new paragraph.&#10;&#10;## A line starting with two hashes becomes a subheading&#10;&#10;- A line starting with a dash becomes a bullet"></textarea>
+            <p class="form-note">Blank line for a new paragraph. <code>## </code> for a subheading, <code>- </code> for a bullet.</p>
+          </div>
+
+          <div class="field" id="image-field">
+            <label for="image">Header image <span class="field__opt">optional</span></label>
+            <div class="admin-image">
+              <img id="image-preview" alt="" hidden>
+              <div>
+                <input type="file" id="image" accept="image/jpeg,image/png,image/webp">
+                <p class="form-note">JPEG, PNG or WebP, up to 4.5MB. Save the article first, then add an image.</p>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="imageAlt">Image description <span class="field__opt">optional</span></label>
+            <input type="text" id="imageAlt" name="imageAlt" placeholder="Describe the picture for screen readers.">
+          </div>
+
+          <div class="field">
+            <label class="admin-check">
+              <input type="checkbox" id="published" checked>
+              <span>Visible on the website</span>
+            </label>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" type="submit">Save article</button>
+            <button class="btn btn--ghost" type="button" id="cancel">Cancel</button>
+            <button class="btn btn--danger" type="button" id="delete" hidden>Delete</button>
+          </div>
+          <div class="form-status" id="editor-status" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="/admin.js"></script>
+</body>
+</html>

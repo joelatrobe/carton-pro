@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /uploads/
+
 Sitemap: https://www.rhoward.co.uk/sitemap.xml
