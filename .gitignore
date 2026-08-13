@@ -4,3 +4,4 @@ data/
 .env
 *.log
 carton-pro-data/
+docs/*.xlsx
