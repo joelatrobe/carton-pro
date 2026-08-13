@@ -14,10 +14,10 @@ services:
 
     # Articles and uploaded images are written here, outside the served
     # directory, and survive redeploys.
-    disks:
-      - name: carton-pro-data
-        mountPath: /var/data
-        sizeGB: 1
+    disk:
+      name: carton-pro-data
+      mountPath: /var/data
+      sizeGB: 1
 
     envVars:
       - key: NODE_ENV
