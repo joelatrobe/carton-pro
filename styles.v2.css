@@ -611,15 +611,13 @@ section { position: relative; }
   letter-spacing: 0.17em;
   text-transform: uppercase;
   color: var(--navy);
-  margin-top: auto;
-  padding-top: 0.9rem;
+  margin-top: 0.9rem;
   display: block;
-  /* Two lines' worth whether the caption fills them or not, so the four
-     captions start on the same line however each one wraps. */
   line-height: 1.35;
-  min-height: calc(0.9rem + 2 * 1.35em);
 }
-@media (max-width: 860px) {
+/* Below this the four columns are too narrow for the longest figure to set
+   on one line, and a wrapped figure leaves the strip looking lopsided. */
+@media (max-width: 1020px) {
   .specs__grid { grid-template-columns: repeat(2, 1fr); }
   .specs__item { border-left: 0; padding: 1.6rem 0; border-top: 1px solid rgba(20, 36, 76, 0.18); }
   .specs__item:nth-child(2n) { border-left: 1px solid rgba(20, 36, 76, 0.18); padding-left: 1.5rem; }
