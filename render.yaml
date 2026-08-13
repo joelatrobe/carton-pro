@@ -2,17 +2,48 @@ services:
   - type: web
     name: carton-pro
     runtime: node
-    plan: free
+    # A disk needs a paid instance. Drop to `plan: free` and delete the disks
+    # block below to trial it for nothing, but then every deploy wipes the
+    # articles and uploaded pictures back to whatever ships in the repo.
+    plan: starter
     region: frankfurt
-    buildCommand: npm install
-    startCommand: node server.js
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+
+    # Articles and uploaded images are written here, outside the served
+    # directory, and survive redeploys.
+    disks:
+      - name: carton-pro-data
+        mountPath: /var/data
+        sizeGB: 1
+
     envVars:
       - key: NODE_ENV
         value: production
+
+      - key: DATA_DIR
+        value: /var/data
+
+      # Signs the admin session cookie. Render generates it once and keeps it,
+      # so a restart does not sign the client out mid-article.
+      - key: SESSION_SECRET
+        generateValue: true
+
+      # Paste the scrypt hash printed by `node tools/hash-password.js`.
+      # The password itself is never stored anywhere.
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+
+      - key: SITE_ORIGIN
+        value: https://www.rhoward.co.uk
+
       - key: ENQUIRY_TO
         value: enquiries@rhoward.co.uk
-      # Set these in the Render dashboard to enable enquiry emails.
-      # Without them, enquiries are logged to data/enquiries.json only.
+
+      # Without SMTP the enquiry still saves and the visitor still gets a
+      # success message; it just does not email anyone.
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT

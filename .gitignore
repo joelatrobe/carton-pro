@@ -1,3 +1,6 @@
 node_modules/
 data/
 .DS_Store
+.env
+*.log
+carton-pro-data/
