@@ -2,29 +2,23 @@ services:
   - type: web
     name: carton-pro
     runtime: node
-    # A disk needs a paid instance. Drop to `plan: free` and delete the disks
-    # block below to trial it for nothing, but then every deploy wipes the
-    # articles and uploaded pictures back to whatever ships in the repo.
-    plan: starter
+    # Free tier. The filesystem is writable but not persistent, so articles
+    # and uploaded pictures reset to whatever ships in content/ on every
+    # deploy. Move to `plan: starter` and add a `disk:` block to keep them.
+    plan: free
     region: frankfurt
     buildCommand: npm ci --omit=dev
     startCommand: npm start
     healthCheckPath: /
     autoDeploy: true
 
-    # Articles and uploaded images are written here, outside the served
-    # directory, and survive redeploys.
-    disk:
-      name: carton-pro-data
-      mountPath: /var/data
-      sizeGB: 1
-
     envVars:
       - key: NODE_ENV
         value: production
 
+      # Writable on the free tier, but wiped on each deploy.
       - key: DATA_DIR
-        value: /var/data
+        value: /opt/render/project/data
 
       # Signs the admin session cookie. Render generates it once and keeps it,
       # so a restart does not sign the client out mid-article.
