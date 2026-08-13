@@ -48,6 +48,11 @@ app.use((req, res, next) => {
   if (IS_PROD) {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
+  /* A temporary share link should never end up in a search index competing
+     with the real domain. */
+  if (process.env.PREVIEW === '1') {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  }
   next();
 });
 
