@@ -582,7 +582,7 @@ section { position: relative; }
 /* Spec strip. Carton Pale, picking up the ground of the hero photograph
    directly above it, with navy type. */
 .specs { background: var(--pale); }
-.specs__grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.specs__grid { display: grid; grid-template-columns: repeat(3, 1fr); }
 /* A column, so the keys sit on one line across all four however many lines
    the value above them takes. */
 .specs__item {
@@ -617,7 +617,7 @@ section { position: relative; }
 }
 /* Below this the four columns are too narrow for the longest figure to set
    on one line, and a wrapped figure leaves the strip looking lopsided. */
-@media (max-width: 1020px) {
+@media (max-width: 860px) {
   .specs__grid { grid-template-columns: repeat(2, 1fr); }
   .specs__item { border-left: 0; padding: 1.6rem 0; border-top: 1px solid rgba(20, 36, 76, 0.18); }
   .specs__item:nth-child(2n) { border-left: 1px solid rgba(20, 36, 76, 0.18); padding-left: 1.5rem; }
@@ -1243,3 +1243,11 @@ form[data-mode="question"] .field--spec { display: none; }
 .admin-signout:hover { color: var(--white); text-decoration: underline; text-underline-offset: 4px; }
 .btn--danger { border-color: #8B2130; color: #8B2130; }
 .btn--danger:hover { background: #8B2130; color: var(--white); }
+
+/* --------------------------------------------------------- careers -- */
+
+.vacancy { border: 1px solid var(--navy-30); padding: clamp(1.5rem, 3vw, 2.5rem); }
+.vacancy + .vacancy { margin-top: 1.25rem; }
+.vacancy h3 { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem); margin: 0 0 0.75rem; }
+.vacancy p { color: var(--navy-70); margin: 0; max-width: 62ch; }
+.vacancy--none { background: var(--mill); border-style: dashed; }
