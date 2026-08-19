@@ -582,7 +582,7 @@ section { position: relative; }
 /* Spec strip. Carton Pale, picking up the ground of the hero photograph
    directly above it, with navy type. */
 .specs { background: var(--pale); }
-.specs__grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.specs__grid { display: grid; grid-template-columns: repeat(4, 1fr); }
 /* A column, so the keys sit on one line across all four however many lines
    the value above them takes. */
 .specs__item {
@@ -617,7 +617,7 @@ section { position: relative; }
 }
 /* Below this the four columns are too narrow for the longest figure to set
    on one line, and a wrapped figure leaves the strip looking lopsided. */
-@media (max-width: 860px) {
+@media (max-width: 1020px) {
   .specs__grid { grid-template-columns: repeat(2, 1fr); }
   .specs__item { border-left: 0; padding: 1.6rem 0; border-top: 1px solid rgba(20, 36, 76, 0.18); }
   .specs__item:nth-child(2n) { border-left: 1px solid rgba(20, 36, 76, 0.18); padding-left: 1.5rem; }
