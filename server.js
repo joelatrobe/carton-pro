@@ -234,7 +234,8 @@ app.post('/api/enquiry', async (req, res) => {
 /* -------------------------------------------------------------- articles */
 
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
-const store = articles.store(DATA_DIR);
+const store = articles.store(DATA_DIR, 'articles.json');
+const vacancyStore = articles.store(DATA_DIR, 'vacancies.json');
 
 /* Articles live on the data disk, which starts empty on a new deployment.
    Anything in content/seed-articles.json is written in once, so the section
@@ -251,6 +252,20 @@ const store = articles.store(DATA_DIR);
     console.log(`Seeded ${list.length} article${list.length === 1 ? '' : 's'} on first run`);
   } catch (err) {
     console.error('Could not seed articles:', err.message);
+  }
+})();
+
+(function seedVacancies() {
+  try {
+    if (fs.existsSync(vacancyStore.file)) return;
+    const seed = path.join(__dirname, 'content', 'seed-vacancies.json');
+    if (!fs.existsSync(seed)) return;
+    const list = JSON.parse(fs.readFileSync(seed, 'utf8'));
+    if (!Array.isArray(list)) return;
+    vacancyStore.writeAll(list);
+    if (list.length) console.log(`Seeded ${list.length} vacancy on first run`);
+  } catch (err) {
+    console.error('Could not seed vacancies:', err.message);
   }
 })();
 const SITE = process.env.SITE_ORIGIN || 'https://www.rhoward.co.uk';
@@ -387,6 +402,142 @@ app.get('/articles/:slug', (req, res, next) => {
       ${a.standfirst ? `<p class="standfirst">${articles.escapeHtml(a.standfirst)}</p>` : ''}
       ${articles.renderBody(a.body)}
       <p class="u-mt-l"><a class="arrow-link" href="/articles">All articles <span aria-hidden="true">&rarr;</span></a></p>
+    </div>
+  </section>`
+  }));
+});
+
+/* -------------------------------------------------------------- careers */
+
+const EMPLOYMENT_TYPES = ['Full time', 'Part time', 'Fixed term', 'Apprenticeship'];
+const SCHEMA_EMPLOYMENT = {
+  'Full time': 'FULL_TIME',
+  'Part time': 'PART_TIME',
+  'Fixed term': 'CONTRACTOR',
+  'Apprenticeship': 'INTERN'
+};
+
+function liveVacancies() {
+  return vacancyStore.readAll()
+    .filter((v) => v.published)
+    .sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+}
+
+function vacancyCard(v) {
+  const facts = [
+    v.employmentType,
+    v.location || 'Peterborough',
+    v.salary
+  ].filter(Boolean)
+   .map((f) => `<li>${articles.escapeHtml(f)}</li>`)
+   .join('\n            ');
+
+  return `<article class="vacancy">
+          <h3>${articles.escapeHtml(v.title)}</h3>
+          <ul class="vacancy__facts">
+            ${facts}
+          </ul>
+          ${v.summary ? `<p class="vacancy__summary">${articles.escapeHtml(v.summary)}</p>` : ''}
+          ${articles.renderBody(v.body, 'h4')}
+          ${v.closes ? `<p class="vacancy__closes">Closing date ${articles.escapeHtml(articles.formatDate(v.closes))}</p>` : ''}
+          <p class="u-mt-l"><a class="arrow-link" href="mailto:enquiries@rhoward.co.uk?subject=${encodeURIComponent('Application: ' + v.title)}">Apply for this role <span aria-hidden="true">&rarr;</span></a></p>
+        </article>`;
+}
+
+/* One JobPosting per live role, which is what puts a vacancy into Google for
+   Jobs. Without a real role there is nothing to describe, so nothing is
+   emitted rather than an empty shell. */
+function vacancySchema(list) {
+  if (!list.length) return '';
+  const org = {
+    '@type': 'Organization',
+    name: 'R Howard',
+    alternateName: 'Carton-Pro',
+    sameAs: `${SITE}/`
+  };
+  const place = {
+    '@type': 'Place',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Unit D, Limesquare Estate, Enterprise Way, Bretton',
+      addressLocality: 'Peterborough',
+      postalCode: 'PE3 8YQ',
+      addressCountry: 'GB'
+    }
+  };
+  return list.map((v) => {
+    const posting = {
+      '@context': 'https://schema.org',
+      '@type': 'JobPosting',
+      title: v.title,
+      description: `<p>${articles.escapeHtml(v.summary || '')}</p>${articles.renderBody(v.body)}`,
+      datePosted: v.posted,
+      hiringOrganization: org,
+      jobLocation: place,
+      employmentType: SCHEMA_EMPLOYMENT[v.employmentType] || 'FULL_TIME'
+    };
+    if (v.closes) posting.validThrough = v.closes;
+    if (v.salary) posting.baseSalary = { '@type': 'MonetaryAmount', currency: 'GBP', value: { '@type': 'QuantitativeValue', value: v.salary } };
+    return `<script type="application/ld+json">\n${jsonLd(posting)}\n</script>`;
+  }).join('\n');
+}
+
+app.get(['/careers', '/careers.html'], (req, res) => {
+  const list = liveVacancies();
+  const roles = list.length
+    ? list.map(vacancyCard).join('\n        ')
+    : `<div class="vacancy vacancy--none">
+          <h3>No vacancies at the moment</h3>
+          <p>We are not advertising a role right now. We do keep speculative applications on file, and print is a trade where someone leaving tends to create an opening at short notice, so it is worth writing in anyway.</p>
+        </div>`;
+
+  res.type('html').send(renderPage({
+    title: 'Careers | Jobs at a Peterborough Carton Printer | Carton-Pro',
+    description: 'Jobs at R Howard, trading as Carton-Pro, a lithographic folding carton printer in Peterborough. Current vacancies and speculative applications for print, finishing and design roles.',
+    canonical: `${SITE}/careers.html`,
+    headExtra: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "${SITE}/" },
+    { "@type": "ListItem", "position": 2, "name": "Careers", "item": "${SITE}/careers.html" }
+  ]
+}
+</script>
+${vacancySchema(list)}`,
+    main: `  <section class="page-head">
+    <div class="wrap">
+      <h1 class="headline">Careers</h1>
+      <p class="standfirst">We are a Peterborough carton printer of about the size where everyone knows everyone. If you want to learn the trade properly rather than one small corner of it, this is a good place to do it.</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="reveal u-mb-l">
+        <span class="label">Current vacancies</span>
+        <h2 class="headline">Open roles</h2>
+      </div>
+      <div class="reveal">
+        ${roles}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap cta__inner">
+      <div>
+        <h2 class="headline">Write to us</h2>
+        <p class="standfirst" style="margin-top:1.25rem">Send a CV and a short note about what you are after. If there is nothing suitable now we will keep it on file rather than bin it.</p>
+      </div>
+      <div>
+        <div class="datalist">
+          <div class="datalist__row"><span class="datalist__key">Email</span><a class="datalist__val" href="mailto:enquiries@rhoward.co.uk?subject=Careers%20enquiry">enquiries@rhoward.co.uk</a></div>
+          <div class="datalist__row"><span class="datalist__key">Telephone</span><a class="datalist__val" href="tel:+441733308000">01733 308000</a></div>
+          <div class="datalist__row"><span class="datalist__key">Post</span><span class="datalist__val">Unit D, Limesquare Estate,<br>Enterprise Way, Bretton,<br>Peterborough PE3 8YQ</span></div>
+        </div>
+      </div>
     </div>
   </section>`
   }));
@@ -551,6 +702,67 @@ app.delete('/api/admin/articles/:id', requireAdmin, (req, res) => {
   const next = list.filter((a) => a.id !== req.params.id);
   if (next.length === list.length) return res.status(404).json({ error: 'That article no longer exists.' });
   store.writeAll(next);
+  res.json({ ok: true });
+});
+
+/* ------------------------------------------------------ vacancies api */
+
+function cleanVacancy(body, existing) {
+  const title = String(body.title || '').trim().slice(0, 120);
+  if (!title) return { error: 'A vacancy needs a job title.' };
+  const text = String(body.body || '').trim().slice(0, 30000);
+  if (!text) return { error: 'A vacancy needs a description.' };
+
+  const type = EMPLOYMENT_TYPES.includes(body.employmentType) ? body.employmentType : 'Full time';
+  const day = (v, fallback) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? v : fallback);
+
+  return {
+    vacancy: {
+      id: existing ? existing.id : crypto.randomUUID(),
+      title,
+      employmentType: type,
+      location: String(body.location || '').trim().slice(0, 80) || 'Peterborough',
+      salary: String(body.salary || '').trim().slice(0, 80),
+      summary: String(body.summary || '').trim().slice(0, 400),
+      body: text,
+      posted: day(body.posted, (existing && existing.posted) || new Date().toISOString().slice(0, 10)),
+      closes: day(body.closes, ''),
+      published: body.published !== false,
+      createdAt: existing ? existing.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  };
+}
+
+app.get('/api/admin/vacancies', requireAdmin, (req, res) => {
+  res.json({ vacancies: vacancyStore.readAll().sort((a, b) => String(b.posted).localeCompare(String(a.posted))) });
+});
+
+app.post('/api/admin/vacancies', requireAdmin, adminJson, (req, res) => {
+  const out = cleanVacancy(req.body || {}, null);
+  if (out.error) return res.status(400).json({ error: out.error });
+  const list = vacancyStore.readAll();
+  list.push(out.vacancy);
+  vacancyStore.writeAll(list);
+  res.json({ ok: true, vacancy: out.vacancy });
+});
+
+app.put('/api/admin/vacancies/:id', requireAdmin, adminJson, (req, res) => {
+  const list = vacancyStore.readAll();
+  const i = list.findIndex((v) => v.id === req.params.id);
+  if (i < 0) return res.status(404).json({ error: 'That vacancy no longer exists.' });
+  const out = cleanVacancy(req.body || {}, list[i]);
+  if (out.error) return res.status(400).json({ error: out.error });
+  list[i] = out.vacancy;
+  vacancyStore.writeAll(list);
+  res.json({ ok: true, vacancy: out.vacancy });
+});
+
+app.delete('/api/admin/vacancies/:id', requireAdmin, (req, res) => {
+  const list = vacancyStore.readAll();
+  const next = list.filter((v) => v.id !== req.params.id);
+  if (next.length === list.length) return res.status(404).json({ error: 'That vacancy no longer exists.' });
+  vacancyStore.writeAll(next);
   res.json({ ok: true });
 });
 

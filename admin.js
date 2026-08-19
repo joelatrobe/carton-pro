@@ -72,9 +72,124 @@
     api('POST', '/api/admin/logout', {}).then(function () { location.reload(); });
   });
 
+
+  /* ----------------------------------------------------------- vacancies */
+
+  var vEditor = document.getElementById('vacancy-editor');
+  var vCurrent = null;
+  var tab = 'articles';
+
+  function vField(id) { return document.getElementById(id); }
+
+  function switchTab(next) {
+    tab = next;
+    Array.prototype.forEach.call(document.querySelectorAll('.admin-tab'), function (b) {
+      b.setAttribute('aria-selected', String(b.getAttribute('data-tab') === next));
+    });
+    var articlesTab = next === 'articles';
+    document.getElementById('manager-label').textContent = articlesTab ? 'Article manager' : 'Vacancy manager';
+    document.getElementById('manager-title').textContent = articlesTab ? 'Your articles' : 'Your vacancies';
+    document.getElementById('new-article').hidden = !articlesTab;
+    document.getElementById('new-vacancy').hidden = articlesTab;
+    editor.hidden = true; vEditor.hidden = true;
+    current = null; vCurrent = null;
+    load();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.admin-tab'), function (b) {
+    b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
+  });
+
+  function loadVacancies() {
+    return api('GET', '/api/admin/vacancies').then(function (data) {
+      var list = data.vacancies || [];
+      if (!list.length) {
+        listEl.innerHTML = '<p class="form-note">No vacancies yet. The careers page shows a "no vacancies" note until you post one.</p>';
+        return;
+      }
+      listEl.innerHTML = list.map(function (v) {
+        return '<button type="button" class="admin-item">' +
+                 '<span class="admin-item__title"></span>' +
+                 '<span class="admin-item__meta">' + (v.posted || '') + ' · ' + v.employmentType +
+                   (v.published ? '' : ' · not advertised') + '</span>' +
+               '</button>';
+      }).join('');
+      Array.prototype.forEach.call(listEl.querySelectorAll('.admin-item'), function (btn, i) {
+        btn.querySelector('.admin-item__title').textContent = list[i].title;
+        btn.addEventListener('click', function () { editVacancy(list[i]); });
+      });
+    }).catch(function (err) {
+      if (/sign in/i.test(err.message)) { show('gate'); return; }
+      listEl.innerHTML = '<p class="form-note">' + err.message + '</p>';
+    });
+  }
+
+  function editVacancy(v) {
+    vCurrent = v || null;
+    vEditor.hidden = false;
+    vField('v-title').value = v ? v.title : '';
+    vField('v-type').value = v ? v.employmentType : 'Full time';
+    vField('v-location').value = v ? (v.location || '') : 'Peterborough';
+    vField('v-salary').value = v ? (v.salary || '') : '';
+    vField('v-summary').value = v ? (v.summary || '') : '';
+    vField('v-body').value = v ? v.body : '';
+    vField('v-posted').value = v ? v.posted : new Date().toISOString().slice(0, 10);
+    vField('v-closes').value = v ? (v.closes || '') : '';
+    vField('v-published').checked = v ? !!v.published : true;
+    document.getElementById('v-delete').hidden = !v;
+    status(document.getElementById('vacancy-status'), '', '');
+    vField('v-title').focus();
+  }
+
+  document.getElementById('new-vacancy').addEventListener('click', function () { editVacancy(null); });
+  document.getElementById('v-cancel').addEventListener('click', function () {
+    vEditor.hidden = true; vCurrent = null;
+  });
+
+  vEditor.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var el = document.getElementById('vacancy-status');
+    var payload = {
+      title: vField('v-title').value,
+      employmentType: vField('v-type').value,
+      location: vField('v-location').value,
+      salary: vField('v-salary').value,
+      summary: vField('v-summary').value,
+      body: vField('v-body').value,
+      posted: vField('v-posted').value,
+      closes: vField('v-closes').value,
+      published: vField('v-published').checked
+    };
+    status(el, '', 'Saving…');
+    var req = vCurrent
+      ? api('PUT', '/api/admin/vacancies/' + vCurrent.id, payload)
+      : api('POST', '/api/admin/vacancies', payload);
+
+    req.then(function (data) {
+      vCurrent = data.vacancy;
+      document.getElementById('v-delete').hidden = false;
+      status(el, 'ok', payload.published
+        ? 'Saved and advertised on the careers page.'
+        : 'Saved. Not advertised until you tick the box.');
+      return loadVacancies();
+    }).catch(function (err) { status(el, 'error', err.message); });
+  });
+
+  document.getElementById('v-delete').addEventListener('click', function () {
+    if (!vCurrent) return;
+    if (!window.confirm('Delete "' + vCurrent.title + '"? This cannot be undone.')) return;
+    api('DELETE', '/api/admin/vacancies/' + vCurrent.id).then(function () {
+      vEditor.hidden = true; vCurrent = null;
+      return loadVacancies();
+    }).catch(function (err) {
+      status(document.getElementById('vacancy-status'), 'error', err.message);
+    });
+  });
+
   /* --------------------------------------------------------------- list */
 
   function load() {
+    if (tab === 'vacancies') return loadVacancies();
     return api('GET', '/api/admin/articles').then(function (data) {
       var list = data.articles || [];
       if (!list.length) {

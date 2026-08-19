@@ -53,13 +53,19 @@
 
     <!-- Manager -->
     <section id="manager" hidden>
+      <div class="admin-tabs" role="tablist" aria-label="What to manage">
+        <button type="button" class="admin-tab" role="tab" data-tab="articles" aria-selected="true">Articles</button>
+        <button type="button" class="admin-tab" role="tab" data-tab="vacancies" aria-selected="false">Vacancies</button>
+      </div>
+
       <div class="admin-head">
         <div>
-          <span class="label">Article manager</span>
+          <span class="label" id="manager-label">Article manager</span>
           <h1 class="subhead" id="manager-title">Your articles</h1>
         </div>
         <div class="btn-row">
           <button class="btn" type="button" id="new-article">Write a new article</button>
+          <button class="btn" type="button" id="new-vacancy" hidden>Post a new vacancy</button>
         </div>
       </div>
 
@@ -114,6 +120,61 @@
             <button class="btn btn--danger" type="button" id="delete" hidden>Delete</button>
           </div>
           <div class="form-status" id="editor-status" role="status" aria-live="polite"></div>
+        </form>
+
+        <form class="admin-editor" id="vacancy-editor" hidden novalidate>
+          <div class="field">
+            <label for="v-title">Job title</label>
+            <input type="text" id="v-title" required>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="v-type">Hours</label>
+              <select id="v-type">
+                <option>Full time</option>
+                <option>Part time</option>
+                <option>Fixed term</option>
+                <option>Apprenticeship</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="v-location">Location</label>
+              <input type="text" id="v-location" placeholder="Peterborough">
+            </div>
+            <div class="field">
+              <label for="v-salary">Salary <span class="field__opt">optional</span></label>
+              <input type="text" id="v-salary" placeholder="e.g. 28,000 to 32,000 depending on experience">
+            </div>
+            <div class="field">
+              <label for="v-posted">Date posted</label>
+              <input type="date" id="v-posted">
+            </div>
+            <div class="field">
+              <label for="v-closes">Closing date <span class="field__opt">optional</span></label>
+              <input type="date" id="v-closes">
+            </div>
+          </div>
+          <div class="field">
+            <label for="v-summary">Summary <span class="field__opt">optional</span></label>
+            <textarea id="v-summary" rows="2" placeholder="One or two sentences about the role."></textarea>
+          </div>
+          <div class="field">
+            <label for="v-body">The role</label>
+            <textarea id="v-body" rows="14" required placeholder="A blank line starts a new paragraph.&#10;&#10;## What you would be doing&#10;&#10;- A line starting with a dash becomes a bullet"></textarea>
+            <p class="form-note">Blank line for a new paragraph. <code>## </code> for a subheading, <code>- </code> for a bullet.</p>
+          </div>
+          <div class="field">
+            <label class="admin-check">
+              <input type="checkbox" id="v-published" checked>
+              <span>Advertised on the website</span>
+            </label>
+          </div>
+          <div class="btn-row">
+            <button class="btn" type="submit">Save vacancy</button>
+            <button class="btn btn--ghost" type="button" id="v-cancel">Cancel</button>
+            <button class="btn btn--danger" type="button" id="v-delete" hidden>Delete</button>
+          </div>
+          <div class="form-status" id="vacancy-status" role="status" aria-live="polite"></div>
         </form>
       </div>
     </section>
