@@ -34,7 +34,7 @@ services:
         value: https://www.rhoward.co.uk
 
       - key: ENQUIRY_TO
-        value: enquiries@rhoward.co.uk
+        value: hello@rhoward.co.uk
 
       # Without SMTP the enquiry still saves and the visitor still gets a
       # success message; it just does not email anyone.

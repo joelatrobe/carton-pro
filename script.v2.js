@@ -151,7 +151,7 @@
         setStatus('ok', 'Thank you. Your enquiry is with our team and we will come back to you within one working day.');
       })
       .catch(function (err) {
-        setStatus('error', err.message + ' Please call 01733 308000 or email enquiries@rhoward.co.uk.');
+        setStatus('error', err.message + ' Please call 01733 308000 or email hello@rhoward.co.uk.');
       })
       .finally(function () {
         submit.disabled = false;
