@@ -585,46 +585,47 @@ section { position: relative; }
 /* Capability strip. Carton Pale, picking up the ground of the hero photograph
    directly above it, with navy type. */
 .specs { background: var(--pale); }
-/* Auto tracks rather than five equal fractions. The five labels are very
-   different lengths, and equal columns would squeeze 'Warehouse &
-   Transportation' down to caption size to keep it on one line. Auto tracks
-   take their content width and then share the leftover space out equally,
-   so every label carries the same breathing room either side of its rule. */
-.specs__grid { display: grid; grid-template-columns: repeat(5, auto); }
+/* Five equal fifths. The labels are wildly different lengths, and sizing the
+   tracks to their content leaves the rules at uneven intervals, which reads as
+   an accident rather than a grid. Equal columns put the rules on a steady beat
+   and cost only type size, which this component can afford: it is a label
+   strip, not a row of figures, and the site's own eyebrow labels sit smaller
+   still. */
+.specs__grid { display: grid; grid-template-columns: repeat(5, 1fr); }
 .specs__item {
-  padding: clamp(2rem, 3.5vw, 3.25rem) clamp(1rem, 1.7vw, 1.75rem);
+  padding: clamp(1.75rem, 2.8vw, 2.5rem) clamp(0.9rem, 1.25vw, 1.25rem);
   border-left: 1px solid rgba(20, 36, 76, 0.18);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+/* The first label sits on the page gutter, so the wrap edge acts as its rule
+   and the strip lines up with the headline beneath it. */
 .specs__item:first-child { border-left: 0; padding-left: 0; }
-.specs__item:last-child { padding-right: 0; }
-
 
 .specs__label {
   font-family: var(--font-brand);
-  /* An evenly weighted label, not a display figure. Capped at 1.5rem: at the
-     1440px wrap the five labels plus their padding measure 1216px against
-     1296px of room even in the fallback face, so the longest of them still
-     sets on one line and nothing is left orphaned. */
-  font-size: clamp(0.8rem, 1.6vw, 1.5rem);
+  /* Sized against the longest label at the narrowest width that still runs
+     five across (1200px): about 177px of ink in 185px of room. Above that the
+     cap holds it at 0.8rem so it does not drift into figure territory. */
+  font-size: clamp(0.66rem, 0.9vw, 0.8rem);
   color: var(--navy);
   line-height: 1.2;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
   display: block;
 }
-/* Below this the five columns are too narrow, so the strip folds to three
-   over two: thirds on the top row, halves on the bottom. No stranded cell. */
-@media (min-width: 621px) and (max-width: 900px) {
+/* Below 1200 the fifths are too narrow for 'Warehouse & Transportation' at a
+   legible size, so the strip folds to three over two: thirds on the top row,
+   halves on the bottom. No stranded cell. */
+@media (min-width: 621px) and (max-width: 1199px) {
   .specs__grid { grid-template-columns: repeat(6, 1fr); }
   .specs__item { padding: 1.5rem 1.2rem; }
   .specs__item:nth-child(-n+3) { grid-column: span 2; }
   .specs__item:nth-child(n+4) { grid-column: span 3; border-top: 1px solid rgba(20, 36, 76, 0.18); }
   .specs__item:first-child, .specs__item:nth-child(4) { border-left: 0; padding-left: 0; }
-  .specs__item:last-child { padding-right: 1.2rem; }
+  .specs__label { font-size: clamp(0.7rem, 1.15vw, 0.92rem); }
 }
 /* Narrower again and even a half row is tight, so the labels stack. */
 @media (max-width: 620px) {
