@@ -228,8 +228,17 @@ section { position: relative; }
    the trim, and a fainter ink. The colour slug goes, as its tracked-out
    caption has nowhere to sit at this width. */
 @media (max-width: 900px) {
+  /* Both fold ticks go on a phone. The left one sits 2.25rem in, which is
+     inside the text column at this width, so it ruled straight through the
+     copy instead of sitting in the margin. */
   .band--navy::after,
-  .band--mill::after { display: none; }
+  .band--mill::after,
+  .band--mill::before { display: none; }
+
+  /* The cutting-mat grid is meant to be felt, not seen. On a phone the copy
+     runs the full width of the band, so every line rules through it and it
+     is very much seen. Keep the Mill White ground, drop the grid. */
+  .band--mill { background-image: none; }
 
   .band--navy::before {
     inset: 1rem;
@@ -593,7 +602,7 @@ section { position: relative; }
    still. */
 .specs__grid { display: grid; grid-template-columns: repeat(5, 1fr); }
 .specs__item {
-  padding: clamp(1.75rem, 2.8vw, 2.5rem) clamp(0.9rem, 1.25vw, 1.25rem);
+  padding: clamp(1.15rem, 1.8vw, 1.5rem) clamp(0.9rem, 1.25vw, 1.25rem);
   border-left: 1px solid rgba(20, 36, 76, 0.18);
   display: flex;
   flex-direction: column;
@@ -608,7 +617,7 @@ section { position: relative; }
   /* Sized against the longest label at the narrowest width that still runs
      five across (1200px): about 177px of ink in 185px of room. Above that the
      cap holds it at 0.8rem so it does not drift into figure territory. */
-  font-size: clamp(0.66rem, 0.9vw, 0.8rem);
+  font-size: clamp(0.7rem, 0.95vw, 0.85rem);
   color: var(--navy);
   line-height: 1.2;
   letter-spacing: 0.07em;
@@ -621,7 +630,7 @@ section { position: relative; }
    halves on the bottom. No stranded cell. */
 @media (min-width: 621px) and (max-width: 1199px) {
   .specs__grid { grid-template-columns: repeat(6, 1fr); }
-  .specs__item { padding: 1.5rem 1.2rem; }
+  .specs__item { padding: 1.1rem 1.2rem; }
   .specs__item:nth-child(-n+3) { grid-column: span 2; }
   .specs__item:nth-child(n+4) { grid-column: span 3; border-top: 1px solid rgba(20, 36, 76, 0.18); }
   .specs__item:first-child, .specs__item:nth-child(4) { border-left: 0; padding-left: 0; }
