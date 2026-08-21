@@ -508,8 +508,48 @@ app.get(['/careers', '/careers.html'], (req, res) => {
 ${vacancySchema(list)}`,
     main: `  <section class="page-head">
     <div class="wrap">
-      <h1 class="headline">Careers</h1>
-      <p class="standfirst">We are a Peterborough carton printer of about the size where everyone knows everyone. If you want to learn the trade properly rather than one small corner of it, this is a good place to do it.</p>
+      <h1 class="headline">Careers at R Howard | Cup-Pro</h1>
+      <p class="standfirst">We are a unique and growing organisation offering bespoke printed cartons and packaging to the wholesale industry. We also offer a full in-house design service to our customers. We believe in creating a friendly and positive work environment, where we are part of a small team who all contribute to the success of the business.</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="split reveal">
+        <div>
+          <span class="label">Working here</span>
+          <h2 class="headline">Everyone is known by name</h2>
+        </div>
+        <div class="stack">
+          <p>Every member of our teams plays a fundamental part and contributes to our overall success as a business. We offer a diverse, engaging and interesting work environment where each of us plays our part in ensuring work is completed to the highest possible quality. Working hard is recognised and rewarded.</p>
+          <p>Everyone is treated as an individual here, we know each other by name. If you enjoy using your initiative, thinking outside the box, sharing views and ideas and being a proactive member of a team, you may enjoy working with us. We endeavour to show everyone who works here that they are appreciated for the contribution they make.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--mill">
+    <div class="wrap">
+      <div class="reveal u-mb-l">
+        <span class="label">What we offer</span>
+        <h2 class="headline">Current benefits include</h2>
+      </div>
+      <ul class="benefits reveal">
+        <li>26 days holiday, plus bank holidays (33 days total per year)</li>
+        <li>Overtime available for factory staff</li>
+        <li>Christmas shutdown, closed 25 December to 2 January</li>
+        <li>Weekly pay, every Friday</li>
+        <li>Company pension</li>
+        <li>Free on-site parking</li>
+        <li>Workwear provided</li>
+        <li>Career development and advancement opportunities</li>
+        <li>Apprenticeships and training when possible</li>
+        <li>Employee Assistance Programme</li>
+        <li>Flexible working and hybrid working for specific roles</li>
+        <li>A good work-life balance, no weekends and an early finish on Fridays</li>
+        <li>Sick pay plus family-related leave and pay</li>
+        <li>Health, safety and quality focused work environment</li>
+      </ul>
     </div>
   </section>
 
@@ -518,9 +558,24 @@ ${vacancySchema(list)}`,
       <div class="reveal u-mb-l">
         <span class="label">Current vacancies</span>
         <h2 class="headline">Open roles</h2>
+        <p class="standfirst" style="margin-top:1.25rem">Any available vacancies will be added to this page. We also advertise our vacancies on Indeed.</p>
       </div>
       <div class="reveal">
-        ${roles}
+        \${roles}
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--mill band--tight">
+    <div class="wrap">
+      <div class="split reveal">
+        <div>
+          <span class="label">Agencies</span>
+          <h2 class="subhead">Our supplier list is closed</h2>
+        </div>
+        <div class="stack">
+          <p>We currently have good working relationships with a few recruitment agencies who are on our approved suppliers list. We are not looking to make changes or add any additional suppliers at this time.</p>
+        </div>
       </div>
     </div>
   </section>

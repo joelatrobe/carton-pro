@@ -839,6 +839,28 @@ section { position: relative; }
 .band--navy .datalist__key, .band--deep .datalist__key { color: var(--pale); }
 .band--navy .datalist__val, .band--deep .datalist__val { color: var(--white); }
 
+/* ------------------------------------------------------------ benefits -- */
+
+/* Fourteen short items. One column is a long scroll, three is a word each,
+   so two columns with the rules doing the separating. */
+.benefits {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(2rem, 4vw, 4rem);
+}
+.benefits li {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(20, 36, 76, 0.16);
+  color: var(--navy);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.benefits li:nth-child(-n+2) { border-top: 0; }
+@media (max-width: 700px) {
+  .benefits { grid-template-columns: 1fr; }
+  .benefits li:nth-child(2) { border-top: 1px solid rgba(20, 36, 76, 0.16); }
+}
+
 /* -------------------------------------------------------- accreditation -- */
 
 /* Three schemes, one row, so none of them is left hanging on its own. */
@@ -852,10 +874,15 @@ section { position: relative; }
   padding: clamp(2rem, 3.2vw, 3.25rem);
   position: relative;
 }
+/* Sized for the longest scheme name rather than the shortest. 'BRCGS for
+   Packaging' is a title, not a three-letter logo, and at the old display
+   size it broke to three ragged lines next to 'FSC'. */
 .accred__mark {
   font-family: var(--font-brand);
-  font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
-  color: var(--white); letter-spacing: -0.02em; display: block; margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 1.1rem + 1.35vw, 2.2rem);
+  line-height: 1.08;
+  color: var(--white); letter-spacing: -0.02em; display: block; margin-bottom: 0.6rem;
+  text-wrap: balance;
 }
 .accred__sub {
   font-family: var(--font-brand); font-size: 0.72rem; letter-spacing: 0.17em;
