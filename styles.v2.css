@@ -1052,9 +1052,30 @@ section { position: relative; }
   align-items: center; padding-top: 1.85rem; font-size: 0.87rem; color: var(--navy-50);
 }
 .foot__badges {
-  display: flex; gap: 1.4rem; font-family: var(--font-brand);
+  display: flex; align-items: center; gap: clamp(1.4rem, 3vw, 2.25rem);
+  font-family: var(--font-brand);
   font-size: 0.72rem; letter-spacing: 0.17em; text-transform: uppercase; color: var(--pale);
 }
+
+/* BRCGS Certificated Site logo. Their guidelines forbid any alteration to the
+   design or colour, so it is placed unmodified on its own white ground: the
+   mark carries mid-grey and mid-blue that would fall well below a readable
+   contrast on Carton Navy. The padding is the exclusion zone the guidelines
+   ask for, scaled with the mark rather than fixed, so nothing crowds it at
+   any width. Aspect ratio is pinned by the intrinsic width and height on the
+   element, since the guidelines also forbid stretching it. */
+.foot__brcgs {
+  display: block;
+  width: clamp(84px, 8vw, 108px);
+  height: auto;
+  background: var(--white);
+  padding: clamp(0.5rem, 0.8vw, 0.7rem);
+  box-sizing: content-box;
+  flex: none;
+}
+/* Kept clearly apart from the BRCGS mark: the guidelines do not permit it to
+   be combined with, or read as one lockup with, another certification. */
+.foot__fsc { flex: none; }
 
 /* --------------------------------------------------------------- utils -- */
 
