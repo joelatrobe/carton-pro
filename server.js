@@ -508,7 +508,7 @@ app.get(['/careers', '/careers.html'], (req, res) => {
 ${vacancySchema(list)}`,
     main: `  <section class="page-head">
     <div class="wrap">
-      <h1 class="headline">Careers at R Howard | Cup-Pro</h1>
+      <h1 class="headline">Careers</h1>
       <p class="standfirst">We are a unique and growing organisation offering bespoke printed cartons and packaging to the wholesale industry. We also offer a full in-house design service to our customers. We believe in creating a friendly and positive work environment, where we are part of a small team who all contribute to the success of the business.</p>
     </div>
   </section>
@@ -518,7 +518,7 @@ ${vacancySchema(list)}`,
       <div class="split reveal">
         <div>
           <span class="label">Working here</span>
-          <h2 class="headline">Small enough that good work gets noticed</h2>
+          <h2 class="headline">Find the right role for you</h2>
         </div>
         <div class="stack">
           <p>Every member of our teams plays a fundamental part and contributes to our overall success as a business. We offer a diverse, engaging and interesting work environment where each of us plays our part in ensuring work is completed to the highest possible quality. Working hard is recognised and rewarded.</p>
