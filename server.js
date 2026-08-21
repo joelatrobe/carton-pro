@@ -563,6 +563,11 @@ ${vacancySchema(list)}`,
       <div class="reveal">
         ${roles}
       </div>
+      <div class="stack reveal u-mt-l">
+        <p>We support equality, diversity and inclusion and encourage applications from all sections of society.</p>
+        <p>You can apply for a role by <a href="mailto:enquiries@rhoward.co.uk?subject=Application%20form%20request">requesting an application form</a>.</p>
+        <p>For information on data protection for candidates see our <a href="/privacy-job-applicants.html" target="_blank" rel="noopener">privacy notice for job applicants</a>.</p>
+      </div>
     </div>
   </section>
 
