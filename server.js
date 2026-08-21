@@ -518,7 +518,7 @@ ${vacancySchema(list)}`,
       <div class="split reveal">
         <div>
           <span class="label">Working here</span>
-          <h2 class="headline">Everyone is known by name</h2>
+          <h2 class="headline">Small enough that good work gets noticed</h2>
         </div>
         <div class="stack">
           <p>Every member of our teams plays a fundamental part and contributes to our overall success as a business. We offer a diverse, engaging and interesting work environment where each of us plays our part in ensuring work is completed to the highest possible quality. Working hard is recognised and rewarded.</p>
@@ -561,7 +561,7 @@ ${vacancySchema(list)}`,
         <p class="standfirst" style="margin-top:1.25rem">Any available vacancies will be added to this page. We also advertise our vacancies on Indeed.</p>
       </div>
       <div class="reveal">
-        \${roles}
+        ${roles}
       </div>
     </div>
   </section>
