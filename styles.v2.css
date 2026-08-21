@@ -1073,9 +1073,21 @@ section { position: relative; }
   box-sizing: content-box;
   flex: none;
 }
-/* Kept clearly apart from the BRCGS mark: the guidelines do not permit it to
-   be combined with, or read as one lockup with, another certification. */
-.foot__fsc { flex: none; }
+/* Kept clearly apart from the BRCGS mark: neither scheme's guidelines permit
+   the marks to be combined or read as one lockup. FSC permits green, black and
+   white, so the white artwork sits straight on the navy with no tile, and it
+   is matched to the BRCGS mark by height so it is not the subordinate of the
+   two, which FSC's guide asks for on size and placement.
+
+   TODO: FSC's promotional rules also want the licence code (FSC(R) C######)
+   alongside the mark. Awaiting it from the client; add it as a .foot__fsc-code
+   span next to this image. */
+.foot__fsc {
+  display: block;
+  width: auto;
+  height: clamp(63.5px, 6.05vw, 81.7px);
+  flex: none;
+}
 
 /* --------------------------------------------------------------- utils -- */
 
