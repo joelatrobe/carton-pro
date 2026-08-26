@@ -562,15 +562,32 @@ section { position: relative; }
   align-items: center;
   text-align: center;
   background-color: var(--mill);
-  background-image: url('assets/img/hero-cartons.jpg');
+  background-image: url('assets/img/hero-boxes-grid-v1.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
 }
-/* The photograph's ground is bright, so white type needs a real scrim over it.
-   At 40% the lightest areas still clear 3:1, which is why the standfirst is
-   set in Barmeno at 24px and up: that qualifies as large text. */
-.hero--light .hero__scrim { background: rgba(20, 36, 76, 0.4); }
+/* Trial hero: the grid of navy boxes, cropped 25% off the top so the lockup
+   embossed on the raised box sits above the headline rather than through it.
+   Panning alone could not clear it: the lockup sits near the centre of the
+   frame and cover leaves only 60 to 240px of play at desktop sizes.
+
+   The crop fixed the contrast at the same time. With the bright box face
+   behind the headline it measured 2.96:1 at the 95th percentile, under the
+   3:1 large text floor; clear of it, the same measurement reads 8.38:1. So
+   the scrim can stay light at 22% and leave the photograph alone, where the
+   bright carton shot it replaced needed 40%.
+   To revert: background-image back to hero-cartons.jpg above, and this to 0.4. */
+.hero--light .hero__scrim { background: rgba(20, 36, 76, 0.22); }
+
+/* On a portrait screen a 2.22:1 photograph has to zoom about 5x to cover, and
+   at that magnification the embossed lockup cannot sit whole anywhere: centred
+   it is sliced down the middle, which reads as a bug rather than a crop. Pan to
+   the left of the frame instead, where the boxes are plain, and let the lockup
+   fall outside the viewport altogether. */
+@media (max-aspect-ratio: 1/1) {
+  .hero--light { background-position: left center; }
+}
 .hero--light .hero__inner { display: flex; flex-direction: column; align-items: center; }
 .hero--light .display { max-width: 16ch; }
 .hero--light .hero__stand {
