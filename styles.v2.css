@@ -562,7 +562,7 @@ section { position: relative; }
   align-items: center;
   text-align: center;
   background-color: var(--mill);
-  background-image: url('assets/img/hero-boxes-grid-v1.jpg');
+  background-image: url('assets/img/hero-boxes-grid-v2.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -580,13 +580,13 @@ section { position: relative; }
    To revert: background-image back to hero-cartons.jpg above, and this to 0.4. */
 .hero--light .hero__scrim { background: rgba(20, 36, 76, 0.22); }
 
-/* On a portrait screen a 2.22:1 photograph has to zoom about 5x to cover, and
-   at that magnification the embossed lockup cannot sit whole anywhere: centred
-   it is sliced down the middle, which reads as a bug rather than a crop. Pan to
-   the left of the frame instead, where the boxes are plain, and let the lockup
-   fall outside the viewport altogether. */
+/* On a portrait screen a 2.22:1 photograph zooms about 5x to cover, and centred
+   that slices the embossed lockup down the middle. It does fit though, about
+   310px of a 375px viewport, so pan to hold it whole instead of hiding it.
+   64% is the midpoint of the range that keeps both its edges inside the frame
+   on every common phone from 360 to 430 CSS px wide. */
 @media (max-aspect-ratio: 1/1) {
-  .hero--light { background-position: left center; }
+  .hero--light { background-position: 64% center; }
 }
 .hero--light .hero__inner { display: flex; flex-direction: column; align-items: center; }
 .hero--light .display { max-width: 16ch; }
