@@ -12,7 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
-app.set('trust proxy', 1);
+/* Hop count, not `true`. Cloudflare appends to a client-supplied
+   X-Forwarded-For rather than replacing it, so trusting the whole chain would
+   let any visitor spoof req.ip and walk straight past the enquiry rate limit
+   and the sign-in lockout. TRUST_PROXY_HOPS is 2 behind Cloudflare (CF plus
+   the host's own proxy) and 1 without it. */
+app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS || 1));
 app.use(express.json({ limit: '64kb' }));
 
 /* ------------------------------------------------------------- security */
@@ -37,6 +42,15 @@ const CSP = [
   "connect-src 'self'",
   'upgrade-insecure-requests'
 ].join('; ');
+
+/* A CDN in front must not keep any of this. /api/admin/session in particular
+   answers 200 with the caller's own signed-in state and sets no cookie, so a
+   cache keyed on URL alone would happily hand one visitor another's session. */
+app.use(['/api', '/admin.html', '/admin.js', '/admin'], (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, private, max-age=0');
+  res.setHeader('Vary', 'Cookie, X-CP-Admin');
+  next();
+});
 
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -95,6 +109,9 @@ app.use(express.static(__dirname, {
   dotfiles: 'deny',
   index: 'index.html',
   setHeaders(res, filePath) {
+    /* The admin surface has already been marked no-store further up. Do not
+       reopen it here: no-cache still lets a shared cache keep a copy. */
+    if (String(res.getHeader('Cache-Control') || '').includes('no-store')) return;
     if (/\.(woff2|mp4|jpg|png|svg)$/.test(filePath)) {
       /* Fingerprinted or stable assets; when one really changes it is given
          a new filename rather than a new cache policy. */
@@ -284,6 +301,7 @@ function renderPage(fields) {
     DESC: fields.description,
     CANONICAL: fields.canonical,
     OGIMAGE: fields.image || `${SITE}/assets/img/og-image.jpg`,
+    OGTYPE: fields.ogType || 'website',
     HEADEXTRA: fields.headExtra || '',
     MAIN: fields.main
   };
@@ -325,7 +343,25 @@ function cardFor(a) {
         </article>`;
 }
 
+/* Served rather than static: a static file can never list articles the client
+   publishes after deploy, which is why none of them were in it. */
+app.get('/sitemap.xml', (req, res) => {
+  const pages = ["/", "/services.html", "/paper-cups.html", "/about.html", "/sustainability.html", "/contact.html", "/faq.html", "/careers.html", "/articles", "/privacy.html"];
+  const urls = pages.map((u) => `  <url><loc>${SITE}${u}</loc></url>`);
+  store.readAll()
+    .filter((a) => a.published)
+    .forEach((a) => {
+      const d = String(a.date || '').slice(0, 10);
+      urls.push(`  <url><loc>${SITE}/articles/${articles.escapeHtml(a.slug)}</loc>` +
+                (/^\d{4}-\d{2}-\d{2}$/.test(d) ? `<lastmod>${d}</lastmod>` : '') + `</url>`);
+    });
+  res.type('application/xml').send(
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`
+  );
+});
+
 app.get(['/articles', '/articles.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=600');
   const list = published(store.readAll());
   const body = list.length
     ? `<div class="posts">\n        ${list.map(cardFor).join('\n        ')}\n      </div>`
@@ -351,6 +387,7 @@ app.get(['/articles', '/articles.html'], (req, res) => {
 });
 
 app.get('/articles/:slug', (req, res, next) => {
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=600');
   const list = store.readAll();
   const a = list.find((x) => x.slug === req.params.slug && x.published);
   if (!a) return next();
@@ -386,6 +423,7 @@ app.get('/articles/:slug', (req, res, next) => {
     title: `${a.title} | Carton-Pro`,
     description: articles.excerpt(a, 155),
     canonical: `${SITE}/articles/${a.slug}`,
+    ogType: 'article',
     image: a.image ? `${SITE}${a.image}` : null,
     headExtra: `<script type="application/ld+json">\n${jsonLd(ld)}\n</script>`,
     main: `  <section class="page-head page-head--article">
@@ -483,6 +521,7 @@ function vacancySchema(list) {
 }
 
 app.get(['/careers', '/careers.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=600');
   const list = liveVacancies();
   const roles = list.length
     ? list.map(vacancyCard).join('\n        ')

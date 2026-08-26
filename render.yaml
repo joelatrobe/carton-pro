@@ -30,6 +30,12 @@ services:
       - key: ADMIN_PASSWORD_HASH
         sync: false
 
+      # 1 when the host's proxy is the only hop. Set to 2 the moment
+      # Cloudflare is in front, or req.ip becomes a Cloudflare edge address and
+      # every visitor shares one rate-limit bucket.
+      - key: TRUST_PROXY_HOPS
+        value: 1
+
       - key: SITE_ORIGIN
         value: https://www.rhoward.co.uk
 
