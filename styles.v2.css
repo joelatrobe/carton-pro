@@ -587,11 +587,17 @@ section { position: relative; }
    on every common phone from 360 to 430 CSS px wide. */
 @media (max-aspect-ratio: 1/1) {
   .hero--light { background-position: 64% center; }
-  /* "Make your packaging stand out." runs to three lines on a phone at the
-     shared display size, and the third line pushes the headline up into the
-     embossed lockup above it: measured, the clearance went from 40px to -3px.
-     Capped so it sets in two, which puts 26px back between them. */
-  .hero--light .display { font-size: clamp(2rem, 10vw, 2.55rem); }
+  /* "Make your packaging stand out." runs to three lines on a phone, and at
+     the shared display size the third line pushed the headline up into the
+     embossed lockup: clearance measured -3px. Shrinking the type fixed that
+     but cost a fifth of its size, so the block is pushed down into the dead
+     space under the buttons instead. There was 131px of it doing nothing. */
+  .hero--light .hero__inner { padding-top: clamp(6rem, 23vh, 13rem); }
+  /* Sized against the height of the screen rather than its width, which is
+     what actually constrains this hero: the headline, the lockup above it and
+     the buttons below all have to share one viewport. A tall phone gets the
+     full display size; a 667px screen has room for two lines, not three. */
+  .hero--light .display { font-size: clamp(1.9rem, 5.9vh, 3.05rem); }
 }
 .hero--light .hero__inner { display: flex; flex-direction: column; align-items: center; }
 .hero--light .display { max-width: 16ch; }
