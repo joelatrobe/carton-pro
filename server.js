@@ -531,8 +531,8 @@ app.get(['/careers', '/careers.html'], (req, res) => {
         </div>`;
 
   res.type('html').send(renderPage({
-    title: 'Careers | Jobs at a Peterborough Carton Printer | Carton-Pro',
-    description: 'Jobs at R Howard, trading as Carton-Pro, a lithographic folding carton printer in Peterborough. Current vacancies and speculative applications for print, finishing and design roles.',
+    title: 'Careers at a Peterborough Carton Printer | Carton-Pro',
+    description: 'Jobs at R Howard, a folding carton printer in Peterborough. Current vacancies, what we offer, and how to request an application form.',
     canonical: `${SITE}/careers.html`,
     headExtra: `<script type="application/ld+json">
 {
