@@ -587,6 +587,11 @@ section { position: relative; }
    on every common phone from 360 to 430 CSS px wide. */
 @media (max-aspect-ratio: 1/1) {
   .hero--light { background-position: 64% center; }
+  /* "Make your packaging stand out." runs to three lines on a phone at the
+     shared display size, and the third line pushes the headline up into the
+     embossed lockup above it: measured, the clearance went from 40px to -3px.
+     Capped so it sets in two, which puts 26px back between them. */
+  .hero--light .display { font-size: clamp(2rem, 10vw, 2.55rem); }
 }
 .hero--light .hero__inner { display: flex; flex-direction: column; align-items: center; }
 .hero--light .display { max-width: 16ch; }
