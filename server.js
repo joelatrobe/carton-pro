@@ -546,6 +546,7 @@ app.get(['/careers', '/careers.html'], (req, res) => {
 </script>
 ${vacancySchema(list)}`,
     main: `  <section class="page-head">
+    <div class="page-head__media" aria-hidden="true" style="background-image:url('/assets/img/careers-warehouse-v1.jpg')"></div>
     <div class="wrap">
       <h1 class="headline">Careers</h1>
       <p class="standfirst">We are a unique and growing organisation offering bespoke printed cartons and packaging to the wholesale industry. We also offer a full in-house design service to our customers. We believe in creating a friendly and positive work environment, where we are part of a small team who all contribute to the success of the business.</p>
@@ -915,8 +916,4 @@ app.get('/api/admin/uploads', requireAdmin, (req, res) => {
 
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, '404.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Carton-Pro running on port ${PORT} (${IS_PROD ? 'production' : 'development'})`);
-});
+})
