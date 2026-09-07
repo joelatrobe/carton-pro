@@ -160,37 +160,72 @@
   });
 })();
 
-/* Looping video: finish the download so the loop never waits on the network.
+/* Gapless looping: two elements, never a seek.
 
-   The freeze at the loop point is not a seam in the footage. With
-   preload="metadata" the browser fetches part of the file and goes idle; when
-   playback wraps past what it holds, readyState collapses and the picture stops
-   until bytes arrive. Seeking makes it worse, because a seek is what forces the
-   refetch.
+   Chrome stalls for a second or two at the loop point where Safari does not.
+   It is not the network and not the encode: Chrome's native loop performs a
+   real seek back to zero and flushes the decoder, and rebuilding the pipeline
+   is what you see. Nothing about the file avoids that as long as the browser
+   is the one looping it.
 
-   This only ever adds to what the markup already does. The video still carries
-   autoplay, loop and preload="metadata", so with no JS, a failed observer or a
-   blocked fetch it behaves exactly as before. All this does is ask for the rest
-   of the file once the band is near the viewport, which keeps it off the
-   critical path, and once the buffer covers the whole duration every loop runs
-   from memory. Nothing is gated on it and playback is never paused. */
+   So it never loops. A second copy of the video sits behind the first, holding
+   at zero and already decoded. A moment before the visible one ends the two
+   swap, and the one that just finished rewinds while it is out of sight, with
+   all the time in the world to be ready. Both share one URL, so the file is
+   fetched once.
+
+   Additive: the markup keeps autoplay, loop and preload, so with no JS this
+   does nothing and the video loops as the browser sees fit. */
 (function () {
-  var vids = document.querySelectorAll('.media-band video[loop]');
-  if (!vids.length || !('IntersectionObserver' in window)) return;
+  var bands = document.querySelectorAll('.media-band');
+  if (!bands.length) return;
 
-  function topUp(v) {
-    if (v.dataset.buffering) return;
-    v.dataset.buffering = '1';
-    try { v.preload = 'auto'; } catch (e) { return; }
-    /* load() would restart it, so only call it if nothing has begun yet. */
-    if (v.readyState === 0) { try { v.load(); } catch (e) {} }
-  }
+  Array.prototype.forEach.call(bands, function (band) {
+    var a = band.querySelector('video[loop]');
+    if (!a || !a.querySelector('source')) return;
 
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      if (en.isIntersecting) { topUp(en.target); io.unobserve(en.target); }
-    });
-  }, { rootMargin: '800px 0px' });
+    var b = a.cloneNode(true);
+    b.removeAttribute('autoplay');
+    a.removeAttribute('loop');
+    b.removeAttribute('loop');
+    a.preload = 'auto';
+    b.preload = 'auto';
+    b.style.opacity = '0';
+    a.style.opacity = '1';
+    a.parentNode.insertBefore(b, a.nextSibling);
 
-  Array.prototype.forEach.call(vids, function (v) { io.observe(v); });
+    var front = a, back = b, swapping = false;
+
+    function arm(v) {
+      try { v.currentTime = 0; } catch (e) {}
+      v.pause();
+    }
+    arm(back);
+
+    function swap() {
+      if (swapping) return;
+      swapping = true;
+      var p = back.play();
+      var go = function () {
+        back.style.opacity = '1';
+        front.style.opacity = '0';
+        var done = front;
+        front = back; back = done;
+        setTimeout(function () { arm(back); swapping = false; }, 120);
+      };
+      if (p && p.then) { p.then(go).catch(function () { swapping = false; }); } else { go(); }
+    }
+
+    function watch() {
+      var v = front;
+      if (!v.duration || !isFinite(v.duration)) return;
+      if (v.duration - v.currentTime <= 0.4) swap();
+    }
+
+    a.addEventListener('timeupdate', watch);
+    b.addEventListener('timeupdate', watch);
+
+    var p0 = a.play();
+    if (p0 && p0.catch) { p0.catch(function () {}); }
+  });
 })();
