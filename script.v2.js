@@ -160,24 +160,37 @@
   });
 })();
 
-/* Looping video: restart before the dead tail.
+/* Looping video: finish the download so the loop never waits on the network.
 
-   The encode declares 52.419s but only carries frames to 52.352s, so the
-   native loop holds the final frame through 67ms of nothing before it starts
-   again. That hold is the hitch. Seeking back a little early skips it, and
-   means the browser's own loop handling never runs. Without JS the video still
-   loops, just with the hold. */
+   The freeze at the loop point is not a seam in the footage. With
+   preload="metadata" the browser fetches part of the file and goes idle; when
+   playback wraps past what it holds, readyState collapses and the picture stops
+   until bytes arrive. Seeking makes it worse, because a seek is what forces the
+   refetch.
+
+   This only ever adds to what the markup already does. The video still carries
+   autoplay, loop and preload="metadata", so with no JS, a failed observer or a
+   blocked fetch it behaves exactly as before. All this does is ask for the rest
+   of the file once the band is near the viewport, which keeps it off the
+   critical path, and once the buffer covers the whole duration every loop runs
+   from memory. Nothing is gated on it and playback is never paused. */
 (function () {
   var vids = document.querySelectorAll('.media-band video[loop]');
-  Array.prototype.forEach.call(vids, function (v) {
-    v.addEventListener('timeupdate', function () {
-      var d = v.duration;
-      if (!d || !isFinite(d)) return;
-      if (d - v.currentTime < 0.12) {
-        v.currentTime = 0;
-        var p = v.play();
-        if (p && p.catch) { p.catch(function () {}); }
-      }
+  if (!vids.length || !('IntersectionObserver' in window)) return;
+
+  function topUp(v) {
+    if (v.dataset.buffering) return;
+    v.dataset.buffering = '1';
+    try { v.preload = 'auto'; } catch (e) { return; }
+    /* load() would restart it, so only call it if nothing has begun yet. */
+    if (v.readyState === 0) { try { v.load(); } catch (e) {} }
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { topUp(en.target); io.unobserve(en.target); }
     });
-  });
+  }, { rootMargin: '800px 0px' });
+
+  Array.prototype.forEach.call(vids, function (v) { io.observe(v); });
 })();
