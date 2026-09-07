@@ -1339,6 +1339,9 @@ form[data-mode="question"] .field--spec { display: none; }
 .article__figure figcaption { font-size: 0.86rem; color: var(--navy-50); margin-top: 0.7rem; }
 
 /* Quiet way in for the client team; deliberately not in the main nav. */
+/* Its own line under the copyright and the certification marks, rather than
+   trailing the legal text. flex-basis forces the wrap in .foot__bottom. */
+.foot__staffrow { flex-basis: 100%; order: 3; }
 .foot__staff { color: var(--navy-50); text-decoration: none; }
 .foot__staff:hover { color: var(--pale); text-decoration: underline; text-underline-offset: 3px; }
 .admin-check { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-body); font-size: 1rem; color: var(--press-black); text-transform: none; letter-spacing: 0; }
@@ -1387,8 +1390,4 @@ form[data-mode="question"] .field--spec { display: none; }
   color: var(--navy-70); border: 1px solid var(--navy-30);
   padding: 0.3rem 0.6rem;
 }
-.vacancy__summary { font-size: 1.08rem; color: var(--navy); margin-bottom: 1.25rem; }
-.vacancy__closes {
-  margin-top: 1.25rem; font-family: var(--font-brand);
-  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy-50);
-}
+.vacancy__summary { font-size: 1.08rem; color: var(--navy
