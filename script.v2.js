@@ -159,3 +159,33 @@
       });
   });
 })();
+
+/* Looping video: dissolve across the seam.
+
+   The homepage footage begins on a dark close-up and ends on a bright wide
+   shot, so the loop point is a hard cut between two unrelated frames and reads
+   as a jolt. Nothing in the file causes it; the container is faststart and the
+   edit list is clean. Fading the last and first moments turns the cut into a
+   dissolve, which reads as deliberate. Without JS the video still loops, just
+   with the cut. */
+(function () {
+  var FADE = 0.7;                       // seconds of fade at each end
+  var vids = document.querySelectorAll('.media-band video[loop]');
+  if (!vids.length) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  Array.prototype.forEach.call(vids, function (v) {
+    v.style.transition = 'opacity 0.45s linear';
+    function tick() {
+      var d = v.duration;
+      if (!d || !isFinite(d)) return;
+      var t = v.currentTime;
+      var nearEnd = d - t < FADE;
+      var nearStart = t < FADE;
+      v.style.opacity = (nearEnd || nearStart) ? '0.15' : '1';
+    }
+    v.addEventListener('timeupdate', tick);
+    v.addEventListener('seeked', tick);
+    v.addEventListener('play', tick);
+  });
+})();

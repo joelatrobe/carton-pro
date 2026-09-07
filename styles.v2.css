@@ -1390,4 +1390,8 @@ form[data-mode="question"] .field--spec { display: none; }
   color: var(--navy-70); border: 1px solid var(--navy-30);
   padding: 0.3rem 0.6rem;
 }
-.vacancy__summary { font-size: 1.08rem; color: var(--navy
+.vacancy__summary { font-size: 1.08rem; color: var(--navy); margin-bottom: 1.25rem; }
+.vacancy__closes {
+  margin-top: 1.25rem; font-family: var(--font-brand);
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy-50);
+}
