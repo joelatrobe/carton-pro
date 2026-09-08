@@ -520,6 +520,77 @@ function vacancySchema(list) {
   }).join('\n');
 }
 
+/* ------------------------------------------------- staff signature page */
+
+/* Gated, but on its own password rather than the article manager's. Everyone
+   in the company needs a signature; almost nobody needs to publish articles,
+   and handing the CMS password round to solve a signature is the wrong trade.
+   An admin session opens it too, so nobody carries two.
+
+   The page itself lives under content/ so express.static cannot reach it. The
+   logo stays public on purpose: the copied signature is read inside mail
+   clients that have no session. */
+const SIGNATURE_HASH = process.env.SIGNATURE_PASSWORD_HASH || '';
+const SIGNATURE_PAGE = path.join(__dirname, 'content', 'signature.html');
+
+function signatureAllowed(req) {
+  const jar = auth.parseCookies(req.headers.cookie);
+  if (auth.readSession(jar[auth.SIGNATURE_COOKIE], 'sig')) return true;
+  return !!auth.readSession(jar[auth.SESSION_COOKIE]);   // admins get in too
+}
+
+function signatureGate(message) {
+  return `<!DOCTYPE html>
+<html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Staff sign in | R Howard</title>
+<link rel="icon" href="/favicon/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="preload" href="/assets/fonts/barmeno-medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.v2.css">
+</head>
+<body style="background:var(--navy);min-height:100svh;display:grid;place-items:center;padding:1.5rem">
+  <main class="wrap" style="max-width:26rem;width:100%">
+    <span class="label" style="color:var(--pale)">R Howard &middot; Carton-Pro</span>
+    <h1 class="subhead" style="color:var(--white);margin:0 0 1.5rem">Email signature</h1>
+    <form method="post" action="/signature/login">
+      <label class="lab" style="color:var(--pale);display:block;margin-bottom:0.5rem;font-family:var(--font-brand);font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase">Password</label>
+      <input type="password" name="password" autocomplete="current-password" autofocus required
+             style="width:100%;padding:0.9rem 1rem;font:inherit;border:1px solid rgba(183,198,222,0.45);background:rgba(255,255,255,0.06);color:var(--white)">
+      ${message ? `<p style="color:#F0857A;font-size:0.9rem;margin:0.75rem 0 0">${articles.escapeHtml(message)}</p>` : ''}
+      <button class="btn btn--light" type="submit" style="margin-top:1.25rem;width:100%;justify-content:center;border:0;cursor:pointer">Sign in</button>
+    </form>
+    <p style="color:var(--navy-30);font-size:0.85rem;margin-top:1.5rem">Ask the office for the password.</p>
+  </main>
+</body></html>`;
+}
+
+app.get(['/signature', '/signature.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, private, max-age=0');
+  res.setHeader('Vary', 'Cookie');
+  if (!signatureAllowed(req)) return res.status(401).type('html').send(signatureGate(''));
+  res.sendFile(SIGNATURE_PAGE);
+});
+
+app.post('/signature/login', express.urlencoded({ extended: false, limit: '4kb' }), (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, private, max-age=0');
+  const blocked = loginBlocked(req.ip);
+  if (blocked) return res.status(429).type('html').send(signatureGate(blocked));
+  if (!SIGNATURE_HASH) {
+    return res.status(503).type('html').send(signatureGate('No signature password is configured yet.'));
+  }
+  if (!auth.verifyPassword(String((req.body && req.body.password) || ''), SIGNATURE_HASH)) {
+    noteFailure(req.ip);
+    return res.status(401).type('html').send(signatureGate('That password was not right.'));
+  }
+  loginHits.delete(req.ip);
+  res.cookie(auth.SIGNATURE_COOKIE, auth.issueSession('sig'), {
+    httpOnly: true, sameSite: 'lax', secure: IS_PROD, path: '/',
+    maxAge: auth.SESSION_HOURS * 3600 * 1000
+  });
+  res.redirect('/signature.html');
+});
+
 app.get(['/careers', '/careers.html'], (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=600');
   const list = liveVacancies();

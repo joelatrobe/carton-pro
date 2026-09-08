@@ -36,6 +36,12 @@ services:
       - key: TRUST_PROXY_HOPS
         value: 1
 
+      # Gates /signature.html. Separate from ADMIN_PASSWORD_HASH on purpose:
+      # everyone needs a signature, almost nobody needs the article manager.
+      # Paste the hash from `node tools/hash-password.js`.
+      - key: SIGNATURE_PASSWORD_HASH
+        sync: false
+
       - key: SITE_ORIGIN
         value: https://www.rhoward.co.uk
 
