@@ -217,6 +217,9 @@
     </div>
 
     <div class="proof" id="proof" role="tabpanel" aria-labelledby="tab-full"></div>
+    <p id="logo-warning" hidden style="margin:0 0 .9rem;padding:.7rem .9rem;border:1px solid #A8261C;color:#A8261C;font-size:.9rem;">
+      The logo is not loading, so copying now would paste a broken image. Untick <b>Logo image</b> for the text-only version, or tell whoever looks after the site.
+    </p>
     <div id="copysrc" aria-hidden="true" style="position:absolute;left:-9999px;top:0;width:600px;background:#fff;"></div>
     <p class="note">The preview is shown on white because that is what your recipients see. Everything except the logo is live text, so it stays sharp and searchable. If a recipient has images turned off, the logo falls back to the words "R Howard Carton-Pro" rather than a broken box.</p>
   </section>
@@ -321,7 +324,18 @@
     '</tr>';
   }
 
-  var LOGO_URL = 'https://www.rhoward.co.uk/assets/carton-pro-signature-logo.png';
+  /* Absolute, because the copied signature is read inside mail clients that
+     have no page to resolve a relative path against. Built from whichever host
+     is actually serving this page, so it resolves today on the deploy URL and
+     resolves on the real domain once that is live, rather than pointing at a
+     404 and giving Outlook nothing to fetch. Opened from a file or localhost
+     there is no useful origin, so it falls back to the production domain. */
+  var LOGO_PATH = '/assets/carton-pro-signature-logo.png';
+  var LOGO_ORIGIN = (location.protocol === 'http:' || location.protocol === 'https:')
+      && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1'
+    ? location.origin
+    : 'https://www.rhoward.co.uk';
+  var LOGO_URL = LOGO_ORIGIN + LOGO_PATH;
   /* The copied signature must carry an absolute URL, since it is read in
      mail clients off this domain. The on-page preview must not: this site's
      CSP allows images from 'self' only, so pointing the preview at
@@ -410,6 +424,21 @@
     proof.innerHTML = build(values(), short, useLogo, true);
     copysrc.innerHTML = build(values(), short, useLogo, false);
     raw.textContent = build(values(), false, useLogo, false);
+    checkLogo();
+  }
+
+  /* A signature copied while the logo is missing pastes as a broken image box,
+     and it is easy not to notice until it has already gone out on email. Say so
+     on the page instead. */
+  function checkLogo(){
+    var warn = document.getElementById('logo-warning');
+    if(!warn) return;
+    var img = proof.querySelector('img');
+    if(!logoBox.checked || !img){ warn.hidden = true; return; }
+    var settle = function(){ warn.hidden = !(img.complete && img.naturalWidth === 0); };
+    if(img.complete){ settle(); return; }
+    img.addEventListener('load', settle);
+    img.addEventListener('error', function(){ warn.hidden = false; });
   }
   logoBox.addEventListener('change', render);
   for(var k in ids){ document.getElementById(ids[k]).addEventListener('input', render); }
