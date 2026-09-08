@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Email signature setup | R Howard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --navy:#14244C;
+    --pale:#B7C6DE;
+    --mill:#EDF0F3;
+    --press:#191C26;
+    --ink:#191C26;
+    --ink-70:#5B6681;
+    --ink-45:#8A92A6;
+    --ground:#F7F8FA;
+    --card:#FFFFFF;
+    --rule:#E1E5EC;
+    --rule-soft:#EDF0F3;
+    --accent:#14244C;
+    --ok:#1F6F4A;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --navy:#B7C6DE;
+      --pale:#5B6681;
+      --mill:#1B2130;
+      --ink:#E6EAF2;
+      --ink-70:#A6B0C2;
+      --ink-45:#79839A;
+      --ground:#0E121A;
+      --card:#161B26;
+      --rule:#2A3141;
+      --rule-soft:#212734;
+      --accent:#B7C6DE;
+      --ok:#6BC79B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --navy:#B7C6DE;
+    --pale:#5B6681;
+    --mill:#1B2130;
+    --ink:#E6EAF2;
+    --ink-70:#A6B0C2;
+    --ink-45:#79839A;
+    --ground:#0E121A;
+    --card:#161B26;
+    --rule:#2A3141;
+    --rule-soft:#212734;
+    --accent:#B7C6DE;
+    --ok:#6BC79B;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:"Source Sans 3","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:clamp(1.5rem,4vw,3.5rem) clamp(1.1rem,4vw,2rem) 5rem;}
+
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-45);
+  }
+  h1{font-size:clamp(2rem,5vw,2.9rem); line-height:1.05; letter-spacing:-.02em; font-weight:700; margin:.5rem 0 .6rem; color:var(--navy); text-wrap:balance;}
+  .lede{color:var(--ink-70); max-width:62ch; margin:0;}
+  header.masthead{border-bottom:2px solid var(--navy); padding-bottom:1.6rem; margin-bottom:2.4rem;}
+
+  h2{font-size:1.3rem; letter-spacing:-.01em; font-weight:700; margin:0; color:var(--ink);}
+  section{margin:0 0 2.8rem;}
+  .sec-head{display:flex; align-items:baseline; gap:.8rem; border-top:1px solid var(--rule); padding-top:.9rem; margin-bottom:1.2rem; flex-wrap:wrap;}
+  .step{
+    font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-45); border:1px solid var(--rule); border-radius:2px; padding:.15rem .45rem;
+  }
+  .sec-head p{flex-basis:100%; margin:.45rem 0 0; color:var(--ink-70); font-size:.95rem; max-width:64ch;}
+
+  /* form */
+  .fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:.9rem 1.1rem;}
+  label{display:block;}
+  .lab{
+    font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--ink-45); margin-bottom:.3rem; display:block;
+  }
+  input[type=text]{
+    width:100%; font:inherit; font-size:.95rem; color:var(--ink); background:var(--card);
+    border:1px solid var(--rule); border-radius:2px; padding:.5rem .6rem;
+  }
+  input[type=text]:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:transparent;}
+  .hint{font-size:.8rem; color:var(--ink-45); margin:.35rem 0 0;}
+
+  /* proof sheet */
+  .proof{
+    background:#FFFFFF; border:1px solid var(--rule); border-radius:2px;
+    padding:28px; overflow-x:auto;
+    box-shadow:0 1px 2px rgba(20,36,76,.05), 0 10px 30px -18px rgba(20,36,76,.35);
+  }
+  .proof-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+    margin-bottom:.7rem;
+  }
+  .tabs{display:flex; gap:.35rem;}
+  .tab{
+    font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+    background:transparent; color:var(--ink-45); border:1px solid var(--rule); border-radius:2px;
+    padding:.35rem .65rem; cursor:pointer;
+  }
+  .tab[aria-selected="true"]{background:var(--navy); border-color:var(--navy); color:var(--ground);}
+  .tab:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .toggle{
+    display:inline-flex; align-items:center; gap:.4rem; margin-left:.5rem;
+    font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-45); border:1px solid var(--rule); border-radius:2px; padding:.35rem .65rem; cursor:pointer;
+  }
+  .toggle input{accent-color:var(--navy); margin:0;}
+  .copy{
+    font-family:"Source Sans 3",sans-serif; font-size:.9rem; font-weight:600;
+    background:var(--navy); color:var(--ground); border:1px solid var(--navy); border-radius:2px;
+    padding:.5rem 1rem; cursor:pointer;
+  }
+  .copy:hover{opacity:.9}
+  .copied{color:var(--ok); font-size:.85rem; font-weight:600; margin-left:.6rem;}
+
+  /* instructions */
+  .cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem;}
+  .col{background:var(--card); border:1px solid var(--rule); border-radius:2px; padding:1.1rem 1.2rem 1.3rem;}
+  .col h3{font-size:1rem; margin:0 0 .15rem; color:var(--ink);}
+  .col .where{font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--ink-45); margin-bottom:.8rem;}
+  ol.steps{list-style:none; counter-reset:s; margin:0; padding:0;}
+  ol.steps li{counter-increment:s; position:relative; padding:.5rem 0 .5rem 1.8rem; border-top:1px solid var(--rule-soft); font-size:.92rem;}
+  ol.steps li:first-child{border-top:0;}
+  ol.steps li::before{
+    content:counter(s); position:absolute; left:0; top:.62rem;
+    font-family:"IBM Plex Mono",monospace; font-size:.66rem; color:var(--navy);
+    background:var(--mill); width:1.25rem; height:1.25rem; border-radius:2px; display:grid; place-items:center;
+  }
+  kbd{font-family:"IBM Plex Mono",monospace; font-size:.82em; background:var(--mill); border:1px solid var(--rule); border-radius:2px; padding:.05em .3em;}
+
+  ul.rules{list-style:none; margin:0; padding:0;}
+  ul.rules li{padding:.55rem 0 .55rem 1.5rem; border-top:1px solid var(--rule-soft); font-size:.95rem; position:relative;}
+  ul.rules li:first-child{border-top:0;}
+  ul.rules li::before{content:""; position:absolute; left:0; top:1.05rem; width:7px; height:7px; background:var(--pale); border-radius:1px;}
+  ul.rules b{color:var(--ink);}
+
+  details{border:1px solid var(--rule); border-radius:2px; background:var(--card); padding:.85rem 1.1rem;}
+  summary{cursor:pointer; font-weight:600; font-size:.95rem;}
+  pre{
+    margin:.9rem 0 0; background:var(--mill); border:1px solid var(--rule); border-radius:2px;
+    padding:.9rem; overflow-x:auto; font-family:"IBM Plex Mono",monospace; font-size:.72rem; line-height:1.5; color:var(--ink-70);
+    max-height:320px;
+  }
+  .note{font-size:.88rem; color:var(--ink-45); border-left:2px solid var(--rule); padding-left:.9rem; margin-top:1.1rem;}
+  a{color:var(--accent);}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">R Howard &middot; Carton-Pro</span>
+    <h1>Email signature</h1>
+    <p class="lede">One signature, used by everyone, built to survive Outlook. Put your own details in below, copy it, and paste it into Outlook once. It takes about two minutes and you never have to think about it again.</p>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <span class="step">Step 1</span>
+      <h2>Your details</h2>
+      <p>Type over the example. Anything you leave blank disappears from the signature, so if you have no direct dial, clear that box.</p>
+    </div>
+    <div class="fields">
+      <label><span class="lab">Full name</span><input type="text" id="f-name" value="David Braun" autocomplete="off"></label>
+      <label><span class="lab">Job title</span><input type="text" id="f-title" value="Sales Director" autocomplete="off"></label>
+      <label><span class="lab">Mobile</span><input type="text" id="f-mob" value="07827 970950" autocomplete="off"></label>
+      <label><span class="lab">Direct dial</span><input type="text" id="f-ddi" value="01733 308004" autocomplete="off"></label>
+      <label><span class="lab">Office</span><input type="text" id="f-off" value="01733 308000" autocomplete="off"></label>
+      <label><span class="lab">Email</span><input type="text" id="f-email" value="david@rhoward.co.uk" autocomplete="off"></label>
+    </div>
+    <p class="hint">Office is the same for everyone, so leave it as it is.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="step">Step 2</span>
+      <h2>Copy it</h2>
+      <p>Use the full version on a new email and the short one on replies, so a long thread does not fill up with repeated address blocks. Outlook lets you set both. Leave the logo on. Turn it off only if you want the text-only version, which can never be blocked by a mail client.</p>
+    </div>
+
+    <div class="proof-bar">
+      <div class="tabs" role="tablist" aria-label="Signature version">
+        <button class="tab" role="tab" id="tab-full" aria-selected="true" aria-controls="proof">Full &middot; new emails</button>
+        <button class="tab" role="tab" id="tab-reply" aria-selected="false" aria-controls="proof">Short &middot; replies</button>
+        <label class="toggle"><input type="checkbox" id="f-logo" checked> Logo image</label>
+      </div>
+      <div>
+        <button class="copy" id="btn-copy">Copy signature</button>
+        <span class="copied" id="copied" hidden>Copied</span>
+      </div>
+    </div>
+
+    <div class="proof" id="proof" role="tabpanel" aria-labelledby="tab-full"></div>
+    <div id="copysrc" aria-hidden="true" style="position:absolute;left:-9999px;top:0;width:600px;background:#fff;"></div>
+    <p class="note">The preview is shown on white because that is what your recipients see. Everything except the logo is live text, so it stays sharp and searchable. If a recipient has images turned off, the logo falls back to the words "R Howard Carton-Pro" rather than a broken box.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="step">Step 3</span>
+      <h2>Paste it into Outlook</h2>
+      <p>Find the version of Outlook you actually use. If you are not sure, try the first one.</p>
+    </div>
+    <div class="cols">
+
+      <div class="col">
+        <h3>Outlook on the web, or new Outlook</h3>
+        <div class="where">outlook.office.com</div>
+        <ol class="steps">
+          <li>Click <b>Copy signature</b> above.</li>
+          <li>Open <b>Settings</b>, the gear at the top right.</li>
+          <li>Go to <b>Account</b>, then <b>Signatures</b>.</li>
+          <li>Name it <b>R Howard</b> and paste into the box with <kbd>Ctrl</kbd>+<kbd>V</kbd>.</li>
+          <li>Under the box, set it for <b>new messages</b> and for <b>replies and forwards</b>.</li>
+          <li><b>Save</b>. Send yourself a test.</li>
+        </ol>
+      </div>
+
+      <div class="col">
+        <h3>Outlook classic on Windows</h3>
+        <div class="where">desktop app</div>
+        <ol class="steps">
+          <li>Click <b>Copy signature</b> above.</li>
+          <li>In Outlook go to <b>File</b>, <b>Options</b>, <b>Mail</b>, <b>Signatures</b>.</li>
+          <li><b>New</b>, name it <b>R Howard</b>.</li>
+          <li>Click into the edit box and paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>.</li>
+          <li>Top right, set <b>New messages</b> and <b>Replies/forwards</b> to your new signature.</li>
+          <li><b>OK</b>, then send yourself a test.</li>
+        </ol>
+      </div>
+
+      <div class="col">
+        <h3>Outlook on a Mac</h3>
+        <div class="where">desktop app</div>
+        <ol class="steps">
+          <li>Click <b>Copy signature</b> above.</li>
+          <li><b>Outlook</b> menu, <b>Settings</b>, <b>Signatures</b>.</li>
+          <li>Press <b>+</b>, name it <b>R Howard</b>.</li>
+          <li>Paste with <kbd>Cmd</kbd>+<kbd>V</kbd>, then close the window to save.</li>
+          <li>Set it as the default for your account, for new messages and replies.</li>
+          <li>Send yourself a test.</li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>House rules</h2>
+      <p>The signature only does its job if it looks the same coming from all of us.</p>
+    </div>
+    <ul class="rules">
+      <li><b>Use the supplied lockup, nothing else.</b> Do not paste in a logo from a document or a screenshot. The one in the signature is the approved artwork at the right size, and it carries alt text so it degrades to words when images are blocked.</li>
+      <li><b>Do not change the colours or fonts.</b> Arial is used deliberately because every mail client on earth has it. Anything else silently falls back and looks wrong.</li>
+      <li><b>No quotes, no awareness ribbons, no green please-do-not-print lines.</b> The sustainability line already says something true about what we sell.</li>
+      <li><b>Keep your job title as it appears on the org chart.</b> Two people with the same role should read the same way.</li>
+      <li><b>Certification logos stay off email.</b> BRCGS and FSC marks have artwork rules and belong on the website and on documents, where they can be reproduced properly.</li>
+      <li><b>Sending from a shared mailbox</b>, for example enquiries or accounts, uses the same signature with the mailbox name in place of a person and no mobile.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>For whoever looks after Microsoft 365</h2>
+      <p>Two things worth knowing before this gets rolled out.</p>
+    </div>
+    <ul class="rules">
+      <li><b>Deploying it centrally.</b> An organisation-wide signature set as a transport rule in the Exchange admin centre gets appended by the server, so staff never see it while writing and it can land below quoted text on replies. Pasting it per person, as above, is uglier to set up but behaves properly.</li>
+      <li><b>The website address.</b> It points at www.rhoward.co.uk, which is where the new site is going. If the primary domain ends up as carton-pro.co.uk instead, this needs changing before it goes out to everyone.</li>
+      <li><b>The sustainability link</b> goes to the sustainability page on the new site. It will 404 until the site is live, so either hold the rollout until then or have that link removed.</li>
+    </ul>
+
+    <details style="margin-top:1.2rem">
+      <summary>Raw HTML, for pasting into an admin console or a signature tool</summary>
+      <p class="hint" style="margin-top:.6rem">This is the full version with the example details still in it. Replace the name, title and numbers, or use merge fields if your tool supports them.</p>
+      <pre id="raw"></pre>
+      <button class="copy" id="btn-raw" style="margin-top:.8rem">Copy raw HTML</button>
+      <span class="copied" id="copied-raw" hidden>Copied</span>
+    </details>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  var telHref = function(n){
+    var d = String(n).replace(/[^0-9+]/g,'');
+    if(d.charAt(0)==='0'){ d = '+44' + d.slice(1); }
+    return d;
+  };
+  var F='font-family:Arial,Helvetica,sans-serif;';
+
+  function row(label, value, href, colour){
+    if(!value) return '';
+    var inner = href ? '<a href="'+href+'" style="color:'+colour+';text-decoration:none;">'+esc(value)+'</a>' : esc(value);
+    return '<tr>'+
+      '<td style="'+F+'font-size:11px;line-height:18px;mso-line-height-rule:exactly;color:#8A92A6;letter-spacing:0.6px;padding:0 10px 0 0;white-space:nowrap;">'+label+'</td>'+
+      '<td style="'+F+'font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:'+colour+';">'+inner+'</td>'+
+    '</tr>';
+  }
+
+  var LOGO_URL = 'https://www.rhoward.co.uk/assets/carton-pro-signature-logo.png';
+  /* The copied signature must carry an absolute URL, since it is read in
+     mail clients off this domain. The on-page preview must not: this site's
+     CSP allows images from 'self' only, so pointing the preview at
+     www.rhoward.co.uk gets it blocked outright, and that host will not serve
+     the file until the domain cuts over. Relative keeps the preview working
+     wherever the page is served from. */
+  var LOGO_PREVIEW = '/assets/carton-pro-signature-logo.png';
+
+  function build(v, short, logo, forPreview){
+    var contact =
+      row('MOB', v.mob, v.mob?('tel:'+telHref(v.mob)):null, '#191C26') +
+      row('DDI', v.ddi, v.ddi?('tel:'+telHref(v.ddi)):null, '#191C26') +
+      row('OFFICE', v.off, v.off?('tel:'+telHref(v.off)):null, '#191C26') +
+      row('EMAIL', v.email, v.email?('mailto:'+v.email):null, '#14244C');
+
+    var person =
+      '<div style="'+F+'font-size:16px;line-height:20px;mso-line-height-rule:exactly;font-weight:bold;color:#14244C;letter-spacing:-0.2px;">'+esc(v.name||'')+'</div>'+
+      (v.title?'<div style="'+F+'font-size:12px;line-height:16px;mso-line-height-rule:exactly;color:#5B6681;padding-top:2px;">'+esc(v.title)+'</div>':'')+
+      '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;">'+
+        '<tr><td colspan="2" style="height:12px;line-height:12px;font-size:0;">&nbsp;</td></tr>'+ contact +
+      '</table>';
+
+    var lockupText =
+      '<div style="'+F+'font-size:9px;line-height:12px;mso-line-height-rule:exactly;color:#8A92A6;letter-spacing:2px;text-transform:uppercase;">R Howard</div>'+
+      '<div style="'+F+'font-size:21px;line-height:24px;mso-line-height-rule:exactly;font-weight:bold;color:#14244C;letter-spacing:0.5px;padding-top:2px;">CARTON-PRO</div>'+
+      '<div style="'+F+'font-size:9px;line-height:12px;mso-line-height-rule:exactly;color:#8A92A6;letter-spacing:1.6px;text-transform:uppercase;padding-top:4px;">The Carton Professionals</div>';
+
+    var lockupImg =
+      '<img src="'+(forPreview?LOGO_PREVIEW:LOGO_URL)+'" width="200" height="63" alt="R Howard Carton-Pro, The Carton Professionals" style="display:block;width:200px;height:63px;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;">';
+
+    var lockup = logo ? lockupImg : lockupText;
+
+    var address = '<div style="'+F+'font-size:11px;line-height:16px;mso-line-height-rule:exactly;color:#5B6681;padding-top:12px;">Unit D, Limesquare Estate<br>Enterprise Way, Bretton<br>Peterborough PE3 8YQ</div>';
+
+    var links =
+      '<div style="'+F+'font-size:12px;line-height:18px;mso-line-height-rule:exactly;padding-top:10px;">'+
+        '<a href="https://www.rhoward.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.rhoward.co.uk</a>'+
+        '<span style="color:#B8BDC9;padding:0 6px;">|</span>'+
+        '<a href="https://www.linkedin.com/company/r-howard-limited" style="color:#14244C;text-decoration:none;">LinkedIn</a>'+
+      '</div>';
+
+    if(short){
+      return '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;'+F+'color:#191C26;">'+
+        '<tr><td style="padding:0;">'+
+          '<div style="'+F+'font-size:14px;line-height:18px;mso-line-height-rule:exactly;font-weight:bold;color:#14244C;">'+esc(v.name||'')+
+          (v.title?'<span style="font-weight:normal;color:#5B6681;font-size:12px;"> &nbsp;'+esc(v.title)+'</span>':'')+'</div>'+
+          '<div style="'+F+'font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:#191C26;padding-top:3px;">'+
+            '<span style="color:#8A92A6;letter-spacing:0.6px;font-size:11px;">R HOWARD CARTON-PRO</span>'+
+            '<span style="color:#B8BDC9;padding:0 6px;">|</span>'+
+            (v.mob?'<a href="tel:'+telHref(v.mob)+'" style="color:#191C26;text-decoration:none;">'+esc(v.mob)+'</a><span style="color:#B8BDC9;padding:0 6px;">|</span>':'')+
+            '<a href="https://www.rhoward.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.rhoward.co.uk</a>'+
+          '</div>'+
+        '</td></tr></table>';
+    }
+
+    return '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;'+F+'color:#191C26;">'+
+      '<tr><td style="padding:0 0 14px 0;">'+
+        '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;"><tr>'+
+          '<td width="230" style="width:230px;padding:0 24px 0 0;vertical-align:top;">'+person+'</td>'+
+          '<td width="250" style="width:250px;padding:0 0 0 24px;border-left:1px solid #E7E8EC;vertical-align:top;">'+lockup+address+links+'</td>'+
+        '</tr></table>'+
+      '</td></tr>'+
+      '<tr><td bgcolor="#EDF0F3" style="background-color:#EDF0F3;padding:9px 14px;'+F+'font-size:11px;line-height:15px;mso-line-height-rule:exactly;color:#14244C;">'+
+        'Print on paper and board is genuinely sustainable. <a href="https://www.rhoward.co.uk/sustainability.html" style="color:#14244C;text-decoration:underline;">See how we make ours</a>'+
+      '</td></tr>'+
+      '<tr><td style="padding:12px 0 0 0;'+F+'font-size:9px;line-height:13px;mso-line-height-rule:exactly;color:#A5ABB8;">'+
+        'This email is confidential and intended solely for the individual it is addressed to. Any views expressed are those of the author and do not necessarily represent those of R Howard Ltd. If you have received this email in error, please notify us on +44 (0)1733 308000 and delete it. Any use, forwarding, printing or copying is strictly prohibited.<br>'+
+        'R Howard Ltd, trading as Carton-Pro. Registered in England.'+
+      '</td></tr></table>';
+  }
+
+  var ids = {name:'f-name', title:'f-title', mob:'f-mob', ddi:'f-ddi', off:'f-off', email:'f-email'};
+  var proof = document.getElementById('proof');
+  var raw = document.getElementById('raw');
+  var short = false;
+
+  function values(){
+    var v = {};
+    for(var k in ids){ v[k] = document.getElementById(ids[k]).value.trim(); }
+    return v;
+  }
+  var logoBox = document.getElementById('f-logo');
+  var copysrc = document.getElementById('copysrc');
+  function render(){
+    var useLogo = logoBox.checked;
+    proof.innerHTML = build(values(), short, useLogo, true);
+    copysrc.innerHTML = build(values(), short, useLogo, false);
+    raw.textContent = build(values(), false, useLogo, false);
+  }
+  logoBox.addEventListener('change', render);
+  for(var k in ids){ document.getElementById(ids[k]).addEventListener('input', render); }
+
+  var tabFull = document.getElementById('tab-full'), tabReply = document.getElementById('tab-reply');
+  function setTab(isShort){
+    short = isShort;
+    tabFull.setAttribute('aria-selected', String(!isShort));
+    tabReply.setAttribute('aria-selected', String(isShort));
+    proof.setAttribute('aria-labelledby', isShort ? 'tab-reply' : 'tab-full');
+    render();
+  }
+  tabFull.addEventListener('click', function(){ setTab(false); });
+  tabReply.addEventListener('click', function(){ setTab(true); });
+
+  function flash(el){ el.hidden = false; setTimeout(function(){ el.hidden = true; }, 2200); }
+
+  function copyRich(node, flag){
+    var html = node.innerHTML;
+    var text = node.innerText;
+    var done = function(){ flash(flag); };
+    if(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
+      var item = new ClipboardItem({
+        'text/html': new Blob([html], {type:'text/html'}),
+        'text/plain': new Blob([text], {type:'text/plain'})
+      });
+      navigator.clipboard.write([item]).then(done).catch(function(){ selectCopy(node, done); });
+    } else {
+      selectCopy(node, done);
+    }
+  }
+  function selectCopy(node, done){
+    var sel = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(node);
+    sel.removeAllRanges(); sel.addRange(range);
+    try{ document.execCommand('copy'); done(); }catch(e){}
+    sel.removeAllRanges();
+  }
+
+  document.getElementById('btn-copy').addEventListener('click', function(){
+    copyRich(copysrc, document.getElementById('copied'));
+  });
+  document.getElementById('btn-raw').addEventListener('click', function(){
+    var txt = raw.textContent, flag = document.getElementById('copied-raw');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ flash(flag); }).catch(function(){ selectCopy(raw, function(){ flash(flag); }); });
+    } else { selectCopy(raw, function(){ flash(flag); }); }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
