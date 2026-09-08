@@ -9,9 +9,19 @@
 <title>Email signature setup | R Howard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="preload" href="/assets/fonts/barmeno-medium.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Same brand face the rest of the site uses, served from the same file. */
+  @font-face{
+    font-family:'Barmeno';
+    src:url('/assets/fonts/barmeno-medium.woff2') format('woff2');
+    font-weight:500; font-style:normal; font-display:swap;
+  }
   :root{
+    --font-brand:'Barmeno','Source Sans 3','Helvetica Neue',Helvetica,sans-serif;
+    --font-body:'Source Sans 3','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --navy:#14244C;
     --pale:#B7C6DE;
     --mill:#EDF0F3;
@@ -60,24 +70,24 @@
   *{box-sizing:border-box}
   body{
     margin:0; background:var(--ground); color:var(--ink);
-    font-family:"Source Sans 3","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family:var(--font-body);
     font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:880px; margin:0 auto; padding:clamp(1.5rem,4vw,3.5rem) clamp(1.1rem,4vw,2rem) 5rem;}
 
   .eyebrow{
-    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-    font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-45);
+    font-family:var(--font-brand);
+    font-size:.73rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-45);
   }
-  h1{font-size:clamp(2rem,5vw,2.9rem); line-height:1.05; letter-spacing:-.02em; font-weight:700; margin:.5rem 0 .6rem; color:var(--navy); text-wrap:balance;}
+  h1{font-family:var(--font-brand); font-size:clamp(2rem,5vw,2.9rem); line-height:0.98; letter-spacing:-.032em; font-weight:500; margin:.5rem 0 .6rem; color:var(--navy); text-wrap:balance;}
   .lede{color:var(--ink-70); max-width:62ch; margin:0;}
   header.masthead{border-bottom:2px solid var(--navy); padding-bottom:1.6rem; margin-bottom:2.4rem;}
 
-  h2{font-size:1.3rem; letter-spacing:-.01em; font-weight:700; margin:0; color:var(--ink);}
+  h2{font-family:var(--font-brand); font-size:1.45rem; line-height:1.1; letter-spacing:-.02em; font-weight:500; margin:0; color:var(--ink);}
   section{margin:0 0 2.8rem;}
   .sec-head{display:flex; align-items:baseline; gap:.8rem; border-top:1px solid var(--rule); padding-top:.9rem; margin-bottom:1.2rem; flex-wrap:wrap;}
   .step{
-    font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    font-family:var(--font-brand); font-size:.73rem; letter-spacing:.18em; text-transform:uppercase;
     color:var(--ink-45); border:1px solid var(--rule); border-radius:2px; padding:.15rem .45rem;
   }
   .sec-head p{flex-basis:100%; margin:.45rem 0 0; color:var(--ink-70); font-size:.95rem; max-width:64ch;}
@@ -86,7 +96,7 @@
   .fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:.9rem 1.1rem;}
   label{display:block;}
   .lab{
-    font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.15em; text-transform:uppercase;
+    font-family:var(--font-brand); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
     color:var(--ink-45); margin-bottom:.3rem; display:block;
   }
   input[type=text]{
@@ -108,7 +118,7 @@
   }
   .tabs{display:flex; gap:.35rem;}
   .tab{
-    font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+    font-family:var(--font-brand); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
     background:transparent; color:var(--ink-45); border:1px solid var(--rule); border-radius:2px;
     padding:.35rem .65rem; cursor:pointer;
   }
@@ -116,12 +126,12 @@
   .tab:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
   .toggle{
     display:inline-flex; align-items:center; gap:.4rem; margin-left:.5rem;
-    font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+    font-family:var(--font-brand); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
     color:var(--ink-45); border:1px solid var(--rule); border-radius:2px; padding:.35rem .65rem; cursor:pointer;
   }
   .toggle input{accent-color:var(--navy); margin:0;}
   .copy{
-    font-family:"Source Sans 3",sans-serif; font-size:.9rem; font-weight:600;
+    font-family:var(--font-brand); font-size:.95rem; font-weight:500; letter-spacing:.02em;
     background:var(--navy); color:var(--ground); border:1px solid var(--navy); border-radius:2px;
     padding:.5rem 1rem; cursor:pointer;
   }
@@ -131,17 +141,17 @@
   /* instructions */
   .cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem;}
   .col{background:var(--card); border:1px solid var(--rule); border-radius:2px; padding:1.1rem 1.2rem 1.3rem;}
-  .col h3{font-size:1rem; margin:0 0 .15rem; color:var(--ink);}
-  .col .where{font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--ink-45); margin-bottom:.8rem;}
+  .col h3{font-family:var(--font-brand); font-size:1.05rem; font-weight:500; letter-spacing:-.01em; margin:0 0 .15rem; color:var(--ink);}
+  .col .where{font-family:var(--font-brand); font-size:.72rem; letter-spacing:.05em; color:var(--ink-45); margin-bottom:.8rem;}
   ol.steps{list-style:none; counter-reset:s; margin:0; padding:0;}
   ol.steps li{counter-increment:s; position:relative; padding:.5rem 0 .5rem 1.8rem; border-top:1px solid var(--rule-soft); font-size:.92rem;}
   ol.steps li:first-child{border-top:0;}
   ol.steps li::before{
     content:counter(s); position:absolute; left:0; top:.62rem;
-    font-family:"IBM Plex Mono",monospace; font-size:.66rem; color:var(--navy);
+    font-family:var(--font-brand); font-size:.7rem; color:var(--navy);
     background:var(--mill); width:1.25rem; height:1.25rem; border-radius:2px; display:grid; place-items:center;
   }
-  kbd{font-family:"IBM Plex Mono",monospace; font-size:.82em; background:var(--mill); border:1px solid var(--rule); border-radius:2px; padding:.05em .3em;}
+  kbd{font-family:var(--mono); font-size:.82em; background:var(--mill); border:1px solid var(--rule); border-radius:2px; padding:.05em .3em;}
 
   ul.rules{list-style:none; margin:0; padding:0;}
   ul.rules li{padding:.55rem 0 .55rem 1.5rem; border-top:1px solid var(--rule-soft); font-size:.95rem; position:relative;}
@@ -153,7 +163,7 @@
   summary{cursor:pointer; font-weight:600; font-size:.95rem;}
   pre{
     margin:.9rem 0 0; background:var(--mill); border:1px solid var(--rule); border-radius:2px;
-    padding:.9rem; overflow-x:auto; font-family:"IBM Plex Mono",monospace; font-size:.72rem; line-height:1.5; color:var(--ink-70);
+    padding:.9rem; overflow-x:auto; font-family:var(--mono); font-size:.72rem; line-height:1.5; color:var(--ink-70);
     max-height:320px;
   }
   .note{font-size:.88rem; color:var(--ink-45); border-left:2px solid var(--rule); padding-left:.9rem; margin-top:1.1rem;}
