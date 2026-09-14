@@ -334,12 +334,12 @@
   var LOGO_ORIGIN = (location.protocol === 'http:' || location.protocol === 'https:')
       && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1'
     ? location.origin
-    : 'https://www.rhoward.co.uk';
+    : 'https://www.cartonpro.co.uk';
   var LOGO_URL = LOGO_ORIGIN + LOGO_PATH;
   /* The copied signature must carry an absolute URL, since it is read in
      mail clients off this domain. The on-page preview must not: this site's
      CSP allows images from 'self' only, so pointing the preview at
-     www.rhoward.co.uk gets it blocked outright, and that host will not serve
+     www.cartonpro.co.uk gets it blocked outright, and that host will not serve
      the file until the domain cuts over. Relative keeps the preview working
      wherever the page is served from. */
   var LOGO_PREVIEW = '/assets/carton-pro-signature-logo.png';
@@ -372,7 +372,7 @@
 
     var links =
       '<div style="'+F+'font-size:12px;line-height:18px;mso-line-height-rule:exactly;padding-top:10px;">'+
-        '<a href="https://www.rhoward.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.rhoward.co.uk</a>'+
+        '<a href="https://www.cartonpro.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.cartonpro.co.uk</a>'+
         '<span style="color:#B8BDC9;padding:0 6px;">|</span>'+
         '<a href="https://www.linkedin.com/company/r-howard-limited" style="color:#14244C;text-decoration:none;">LinkedIn</a>'+
       '</div>';
@@ -386,7 +386,7 @@
             '<span style="color:#8A92A6;letter-spacing:0.6px;font-size:11px;">R HOWARD CARTON-PRO</span>'+
             '<span style="color:#B8BDC9;padding:0 6px;">|</span>'+
             (v.mob?'<a href="tel:'+telHref(v.mob)+'" style="color:#191C26;text-decoration:none;">'+esc(v.mob)+'</a><span style="color:#B8BDC9;padding:0 6px;">|</span>':'')+
-            '<a href="https://www.rhoward.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.rhoward.co.uk</a>'+
+            '<a href="https://www.cartonpro.co.uk" style="color:#14244C;text-decoration:none;font-weight:bold;">www.cartonpro.co.uk</a>'+
           '</div>'+
         '</td></tr></table>';
     }
@@ -399,7 +399,7 @@
         '</tr></table>'+
       '</td></tr>'+
       '<tr><td bgcolor="#EDF0F3" style="background-color:#EDF0F3;padding:9px 14px;'+F+'font-size:11px;line-height:15px;mso-line-height-rule:exactly;color:#14244C;">'+
-        'Print on paper and board is genuinely sustainable. <a href="https://www.rhoward.co.uk/sustainability.html" style="color:#14244C;text-decoration:underline;">See how we make ours</a>'+
+        'Print on paper and board is genuinely sustainable. <a href="https://www.cartonpro.co.uk/sustainability.html" style="color:#14244C;text-decoration:underline;">See how we make ours</a>'+
       '</td></tr>'+
       '<tr><td style="padding:12px 0 0 0;'+F+'font-size:9px;line-height:13px;mso-line-height-rule:exactly;color:#A5ABB8;">'+
         'This email is confidential and intended solely for the individual it is addressed to. Any views expressed are those of the author and do not necessarily represent those of R Howard Ltd. If you have received this email in error, please notify us on +44 (0)1733 308000 and delete it. Any use, forwarding, printing or copying is strictly prohibited.<br>'+

@@ -2,23 +2,29 @@ services:
   - type: web
     name: carton-pro
     runtime: node
-    # Free tier. The filesystem is writable but not persistent, so articles
-    # and uploaded pictures reset to whatever ships in content/ on every
-    # deploy. Move to `plan: starter` and add a `disk:` block to keep them.
-    plan: free
+    # Starter. Paid for by the client. The disk below is what makes articles,
+    # vacancies and uploaded pictures survive a deploy, so the two go together:
+    # drop to `free` and the disk goes with it, taking the content with it.
+    plan: starter
     region: frankfurt
     buildCommand: npm ci --omit=dev
     startCommand: npm start
     healthCheckPath: /
     autoDeploy: true
 
+    disk:
+      name: disk
+      mountPath: /var/data
+      sizeGB: 1
+
     envVars:
       - key: NODE_ENV
         value: production
 
-      # Writable on the free tier, but wiped on each deploy.
+      # Must stay inside the disk mountPath above, or the content is written
+      # to the container filesystem and lost on the next deploy.
       - key: DATA_DIR
-        value: /opt/render/project/data
+        value: /var/data
 
       # Signs the admin session cookie. Render generates it once and keeps it,
       # so a restart does not sign the client out mid-article.
@@ -43,7 +49,7 @@ services:
         sync: false
 
       - key: SITE_ORIGIN
-        value: https://www.rhoward.co.uk
+        value: https://www.cartonpro.co.uk
 
       - key: ENQUIRY_TO
         value: hello@rhoward.co.uk

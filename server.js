@@ -285,7 +285,7 @@ const vacancyStore = articles.store(DATA_DIR, 'vacancies.json');
     console.error('Could not seed vacancies:', err.message);
   }
 })();
-const SITE = process.env.SITE_ORIGIN || 'https://www.rhoward.co.uk';
+const SITE = process.env.SITE_ORIGIN || 'https://www.cartonpro.co.uk';
 
 function template() {
   /* Read per request in development so an edit shows without a restart. */

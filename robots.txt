@@ -4,4 +4,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /admin.js
 
-Sitemap: https://www.rhoward.co.uk/sitemap.xml
+Sitemap: https://www.cartonpro.co.uk/sitemap.xml
