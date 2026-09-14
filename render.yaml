@@ -36,11 +36,15 @@ services:
       - key: ADMIN_PASSWORD_HASH
         sync: false
 
-      # 1 when the host's proxy is the only hop. Set to 2 the moment
-      # Cloudflare is in front, or req.ip becomes a Cloudflare edge address and
-      # every visitor shares one rate-limit bucket.
+      # 2, because Render fronts every service with its own Cloudflare, so
+      # there are two hops, not one. At 1, req.ip resolved to the Cloudflare
+      # edge node rather than the visitor, and since consecutive requests land
+      # on different edges the per-IP sign-in throttle never counted past a
+      # few. Verified on the live site: at 2 the real address is recorded, and
+      # a forged X-Forwarded-For is ignored, because Cloudflare and Render each
+      # append the address they actually saw.
       - key: TRUST_PROXY_HOPS
-        value: 1
+        value: 2
 
       # Gates /signature.html. Separate from ADMIN_PASSWORD_HASH on purpose:
       # everyone needs a signature, almost nobody needs the article manager.
