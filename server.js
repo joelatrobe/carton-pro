@@ -160,7 +160,7 @@ if (process.env.SMTP_HOST) {
 }
 
 const ENQUIRY_TO = process.env.ENQUIRY_TO || 'hello@rhoward.co.uk';
-const ENQUIRY_FROM = process.env.ENQUIRY_FROM || 'website@rhoward.co.uk';
+const ENQUIRY_FROM = process.env.ENQUIRY_FROM || 'hello@rhoward.co.uk';
 
 function clean(value, max) {
   return String(value == null ? '' : value)
@@ -676,7 +676,7 @@ ${vacancySchema(list)}`,
       </div>
       <div class="stack reveal u-mt-l">
         <p>We support equality, diversity and inclusion and encourage applications from all sections of society.</p>
-        <p>You can apply for a role by <a href="mailto:enquiries@rhoward.co.uk?subject=Application%20form%20request">requesting an application form</a>.</p>
+        <p>You can apply for a role by <a href="mailto:hello@rhoward.co.uk?subject=Application%20form%20request">requesting an application form</a>.</p>
         <p>For information on data protection for candidates see our <a href="/privacy-job-applicants.html" target="_blank" rel="noopener">privacy notice for job applicants</a>.</p>
       </div>
     </div>
