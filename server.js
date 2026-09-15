@@ -70,6 +70,41 @@ app.use((req, res, next) => {
   next();
 });
 
+/* ------------------------------------------------ retired domain redirect */
+/* carton-pro.co.uk is the old hyphenated domain. It ran a WordPress site whose
+   pages are still in Google's index, so they are sent to their nearest
+   equivalent here rather than all dumped on the homepage, which would throw
+   away whatever link equity those URLs carry.
+
+   Only this one domain redirects. rhoward.co.uk deliberately serves the site
+   as-is and relies on its canonical tags to consolidate onto cartonpro. */
+
+const RETIRED_HOSTS = new Set(['carton-pro.co.uk', 'www.carton-pro.co.uk']);
+
+const RETIRED_PATHS = new Map([
+  ['/home', '/'],
+  ['/about', '/about.html'],
+  ['/about-us', '/about.html'],
+  ['/contact-us', '/contact.html'],
+  ['/contact', '/contact.html'],
+  ['/services', '/services.html']
+]);
+
+app.use((req, res, next) => {
+  if (!RETIRED_HOSTS.has(String(req.hostname || '').toLowerCase())) return next();
+  let pathname;
+  try {
+    pathname = decodeURIComponent(req.path);
+  } catch (err) {
+    pathname = '/';
+  }
+  /* Trailing slashes are how WordPress wrote these, so match without one. */
+  const key = pathname.replace(/\/+$/, '').toLowerCase() || '/';
+  const target = RETIRED_PATHS.get(key) || '/';
+  res.setHeader('Cache-Control', 'no-cache');
+  return res.redirect(301, 'https://www.cartonpro.co.uk' + target);
+});
+
 /* --------------------------------------------------------- private paths */
 /* express.static is pointed at the project root, so everything that is not
    the website itself has to be refused explicitly. Without this the repo,
