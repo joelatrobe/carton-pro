@@ -185,12 +185,23 @@
    running a screen before it comes into view, and the loop itself is the same
    code on both paths. */
 (function () {
-  var bands = document.querySelectorAll('.media-band');
-  if (!bands.length) return;
+  /* Every media band, plus any other looping video that opts in with
+     data-gapless, such as a long clip behind a page header. */
+  var videos = document.querySelectorAll('.media-band video[loop], video[loop][data-gapless]');
+  if (!videos.length) return;
 
-  Array.prototype.forEach.call(bands, function (band) {
-    var a = band.querySelector('video[loop]');
-    if (!a || !a.querySelector('source')) return;
+  Array.prototype.forEach.call(videos, function (a) {
+    if (!a.querySelector('source')) return;
+    var band = a.closest('.media-band, .page-head') || a.parentNode;
+
+    /* Header clips are hidden on phones, where the poster stands in. Take the
+       source off so a hidden video cannot quietly download in the background. */
+    if (window.getComputedStyle(a).display === 'none') {
+      a.removeAttribute('autoplay');
+      a.removeChild(a.querySelector('source'));
+      a.load();
+      return;
+    }
 
     var far = 'IntersectionObserver' in window &&
       band.getBoundingClientRect().top > window.innerHeight * 2;

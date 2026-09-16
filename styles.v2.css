@@ -617,7 +617,7 @@ section { position: relative; }
 .hero__cue {
   position: absolute;
   left: 50%;
-  bottom: clamp(0.75rem, 2.5vh, 1.75rem);
+  bottom: clamp(1.25rem, 3.8vh, 2.5rem);
   width: 44px;
   height: 44px;
   margin-left: -22px;
@@ -641,7 +641,7 @@ section { position: relative; }
    hero spacing there was tuned against the embossed lockup, so the cue gives
    way rather than the layout. 390x844 and taller keep it, with 33px or more. */
 @media (max-width: 700px) {
-  .hero__cue { bottom: calc(53px + env(safe-area-inset-bottom) + 10px); }
+  .hero__cue { bottom: calc(53px + env(safe-area-inset-bottom) + 16px); }
 }
 @media (max-width: 700px) and (max-height: 800px) {
   .hero__cue { display: none; }
@@ -728,6 +728,8 @@ section { position: relative; }
   background-position: center; background-size: cover; background-repeat: no-repeat;
 }
 .page-head__media img, .page-head__media video { width: 100%; height: 100%; object-fit: cover; }
+/* Stacked, so a gapless loop's second copy sits exactly over the first. */
+.page-head__media video { position: absolute; inset: 0; }
 .page-head::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(to top, rgba(20, 36, 76,0.96) 0%, rgba(20, 36, 76,0.72) 100%);
