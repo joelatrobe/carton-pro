@@ -610,6 +610,47 @@ section { position: relative; }
 }
 .hero--light .hero__stand strong { font-family: var(--font-brand); font-weight: 500; }
 
+/* Scroll cue. A full-height hero with centred type gives no hint that the
+   page carries on, so a chevron sits at the foot of it and nudges downward.
+   It is a real link to the capability strip rather than decoration, with a
+   44px hit area. The global reduced-motion rule already stops the bounce. */
+.hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.75rem, 2.5vh, 1.75rem);
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  display: grid;
+  place-items: center;
+  color: var(--white);
+  opacity: 0.85;
+  animation: cueBob 2.2s var(--ease) infinite;
+  transition: opacity 0.2s var(--ease);
+}
+.hero__cue:hover, .hero__cue:focus-visible { opacity: 1; }
+.hero__cue svg { width: 30px; height: 30px; filter: drop-shadow(0 1px 3px rgba(20, 36, 76, 0.45)); }
+@keyframes cueBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(8px); }
+}
+/* Phones carry the fixed call and quote bar along the bottom edge, so the cue
+   sits above it rather than hidden underneath, with room for the 8px bob.
+   On a short phone there is no gap to put it in: at 375x667 the buttons end
+   8px below where it would start, and at 360x780 they clear it by 8px. The
+   hero spacing there was tuned against the embossed lockup, so the cue gives
+   way rather than the layout. 390x844 and taller keep it, with 33px or more. */
+@media (max-width: 700px) {
+  .hero__cue { bottom: calc(53px + env(safe-area-inset-bottom) + 10px); }
+}
+@media (max-width: 700px) and (max-height: 800px) {
+  .hero__cue { display: none; }
+}
+/* Lands the strip clear of the fixed masthead rather than underneath it.
+   89px is the masthead's measured height once stuck, the same at 390, 817
+   and 1440 wide. */
+#capabilities { scroll-margin-top: 89px; }
+
 /* Paired hero buttons share one width so they read as a matched set. */
 .btn-row--centre { justify-content: center; }
 .btn-row--centre .btn {

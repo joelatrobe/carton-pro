@@ -175,7 +175,15 @@
    fetched once.
 
    Additive: the markup keeps autoplay, loop and preload, so with no JS this
-   does nothing and the video loops as the browser sees fit. */
+   does nothing and the video loops as the browser sees fit.
+
+   A band more than two screens down is held back until the reader is about a
+   screen away. Autoplay otherwise starts the download on arrival, and on the
+   about page that was most of 12MB for a film four screens below the fold.
+   Whether the homepage band counts as far depends on the screen: on a large
+   desktop window it starts at once, on a phone it waits. Either way it is
+   running a screen before it comes into view, and the loop itself is the same
+   code on both paths. */
 (function () {
   var bands = document.querySelectorAll('.media-band');
   if (!bands.length) return;
@@ -184,6 +192,29 @@
     var a = band.querySelector('video[loop]');
     if (!a || !a.querySelector('source')) return;
 
+    var far = 'IntersectionObserver' in window &&
+      band.getBoundingClientRect().top > window.innerHeight * 2;
+    if (!far) { start(a); return; }
+
+    /* Detach the source and reload, which aborts anything already in flight.
+       The poster stays up in the meantime. */
+    var source = a.querySelector('source');
+    a.removeAttribute('autoplay');
+    a.pause();
+    a.removeChild(source);
+    a.load();
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      a.appendChild(source);
+      a.setAttribute('autoplay', '');
+      a.load();
+      start(a);
+    }, { rootMargin: '100% 0px' });
+    io.observe(band);
+  });
+
+  function start(a) {
     var b = a.cloneNode(true);
     b.removeAttribute('autoplay');
     a.removeAttribute('loop');
@@ -227,5 +258,5 @@
 
     var p0 = a.play();
     if (p0 && p0.catch) { p0.catch(function () {}); }
-  });
+  }
 })();
