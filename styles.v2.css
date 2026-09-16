@@ -1088,7 +1088,7 @@ section { position: relative; }
   gap: clamp(2rem, 4vw, 3.5rem); padding-bottom: 3rem;
   /* A clear rule between the columns and the legal line beneath. It was a
      hairline at 16% and read as nothing on most screens. */
-  border-bottom: 2px solid rgba(183, 198, 222, 0.42);
+  border-bottom: 3px solid rgba(183, 198, 222, 0.55);
 }
 @media (max-width: 900px) { .foot__top { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .foot__top { grid-template-columns: 1fr; } }
@@ -1124,6 +1124,9 @@ section { position: relative; }
   display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: space-between;
   align-items: center; padding-top: 2.25rem; font-size: 0.87rem; color: var(--navy-50);
 }
+/* The company name carries the legal line, so it is set heavier and brighter
+   than the registration detail around it. */
+.foot__bottom strong { font-weight: 600; color: var(--pale); }
 .foot__badges {
   display: flex; align-items: center; gap: clamp(1.4rem, 3vw, 2.25rem);
   font-family: var(--font-brand);
