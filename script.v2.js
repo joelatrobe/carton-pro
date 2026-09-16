@@ -160,35 +160,39 @@
   });
 })();
 
-/* Gapless looping: two elements, never a seek.
+/* Gapless looping: two elements, never a visible seek.
 
    Chrome stalls for a second or two at the loop point where Safari does not.
-   It is not the network and not the encode: Chrome's native loop performs a
-   real seek back to zero and flushes the decoder, and rebuilding the pipeline
-   is what you see. Nothing about the file avoids that as long as the browser
-   is the one looping it.
+   Its native loop performs a real seek back to zero and flushes the decoder,
+   and rebuilding the pipeline is what you see. Nothing about the file avoids
+   that as long as the browser is the one looping it.
 
-   So it never loops. A second copy of the video sits behind the first, holding
-   at zero and already decoded. A moment before the visible one ends the two
-   swap, and the one that just finished rewinds while it is out of sight, with
-   all the time in the world to be ready. Both share one URL, so the file is
-   fetched once.
+   So it never loops. A second copy sits behind the first, rewound to zero.
+   As the visible one reaches its last frame the two swap places, and the one
+   that just finished rewinds while it is out of sight.
+
+   Three things Chrome does shaped this version. A paused player it has not
+   needed for a while gets its decoder released, so the first play() after a
+   minute idle was itself a seek; the waiting copy is therefore warmed, played
+   until playback begins and then paused, right after it is rewound and again
+   a second and a half before it is needed. A video that is fully covered or
+   at opacity 0 is not composited at all, so its frame callbacks never fire
+   and revealing it costs several frames while a layer is built; the waiting
+   copy therefore sits on top at 1% opacity, invisible but live, and the swap
+   happens on the first frame it actually presents. And VLC's muxer had left
+   the first frame out of the keyframe table, so every rewind to zero landed
+   six seconds in; that was fixed in the files.
 
    Additive: the markup keeps autoplay, loop and preload, so with no JS this
    does nothing and the video loops as the browser sees fit.
 
    A band more than two screens down is held back until the reader is about a
    screen away. Autoplay otherwise starts the download on arrival, and on the
-   about page that was most of 12MB for a film four screens below the fold.
-   Whether the homepage band counts as far depends on the screen: on a large
-   desktop window it starts at once, on a phone it waits. Either way it is
-   running a screen before it comes into view, and the loop itself is the same
-   code on both paths. */
+   about page that was most of 12MB for a film four screens below the fold. */
 (function () {
-  /* Every media band, plus any other looping video that opts in with
-     data-gapless, such as a long clip behind a page header. */
   var videos = document.querySelectorAll('.media-band video[loop], video[loop][data-gapless]');
   if (!videos.length) return;
+  var hasRVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
   Array.prototype.forEach.call(videos, function (a) {
     if (!a.querySelector('source')) return;
@@ -207,8 +211,6 @@
       band.getBoundingClientRect().top > window.innerHeight * 2;
     if (!far) { start(a); return; }
 
-    /* Detach the source and reload, which aborts anything already in flight.
-       The poster stays up in the meantime. */
     var source = a.querySelector('source');
     a.removeAttribute('autoplay');
     a.pause();
@@ -232,41 +234,102 @@
     b.removeAttribute('loop');
     a.preload = 'auto';
     b.preload = 'auto';
-    b.style.opacity = '0';
-    a.style.opacity = '1';
+    var base = parseInt(window.getComputedStyle(a).zIndex, 10);
+    if (isNaN(base)) base = 0;
+    /* The visible copy underneath at full opacity, the waiting one on top at
+       1%: painted and composited, so frame callbacks fire, but not seen. */
+    function toFront(v) { v.style.zIndex = String(base); v.style.opacity = '1'; }
+    function toBack(v)  { v.style.zIndex = String(base + 1); v.style.opacity = '0.01'; }
+    toFront(a);
+    toBack(b);
     a.parentNode.insertBefore(b, a.nextSibling);
 
-    var front = a, back = b, swapping = false;
+    var front = a, back = b, switching = false, warmedForEnd = false, warmToken = null;
 
-    function arm(v) {
-      try { v.currentTime = 0; } catch (e) {}
+    function rewind(v, then) {
       v.pause();
+      var seek = function () {
+        var onSeeked = function () { v.removeEventListener('seeked', onSeeked); then(); };
+        v.addEventListener('seeked', onSeeked);
+        v.currentTime = 0;
+      };
+      if (v.readyState >= 1) seek(); else v.addEventListener('loadedmetadata', seek, { once: true });
     }
-    arm(back);
+
+    /* Play until playback has actually begun, then pause. The decoder is
+       then live and holding the opening frame, and a later play() resumes
+       instead of rebuilding. Costs about a frame at the top of each loop.
+       Gated on the playing event, not a frame callback: a covered video is
+       not composited, so its frame callbacks arrive seconds late or never.
+       If it turns out not to have started at the beginning, rewind again. */
+    function warm(v) {
+      var token = {};
+      warmToken = token;
+      var onPlaying = function () {
+        v.removeEventListener('playing', onPlaying);
+        if (warmToken !== token) return;   // a swap got here first
+        v.pause();
+        warmToken = null;
+        if (v.currentTime > 0.5) rewind(v, function () { warm(v); });
+      };
+      v.addEventListener('playing', onPlaying);
+      var p = v.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          v.removeEventListener('playing', onPlaying);
+          if (warmToken === token) warmToken = null;
+        });
+      }
+    }
+
+    function arm(v) { rewind(v, function () { warm(v); }); }
 
     function swap() {
-      if (swapping) return;
-      swapping = true;
-      var p = back.play();
-      var go = function () {
-        back.style.opacity = '1';
-        front.style.opacity = '0';
-        var done = front;
-        front = back; back = done;
-        setTimeout(function () { arm(back); swapping = false; }, 120);
+      if (switching) return;
+      switching = true;
+      warmToken = null;
+      var incoming = back, outgoing = front, shown = false;
+      var show = function () {
+        if (shown) return;
+        shown = true;
+        toFront(incoming);
+        toBack(outgoing);
+        front = incoming; back = outgoing; warmedForEnd = false;
+        setTimeout(function () { arm(back); switching = false; }, 150);
       };
-      if (p && p.then) { p.then(go).catch(function () { swapping = false; }); } else { go(); }
+      /* Reveal on the first frame the incoming copy presents after play(),
+         so the outgoing copy is never replaced by a stale surface. */
+      if (hasRVFC) incoming.requestVideoFrameCallback(function () { show(); });
+      var p = incoming.play();
+      if (p && p.then) {
+        p.then(function () { if (!hasRVFC) show(); }).catch(function () { switching = false; });
+      } else if (!hasRVFC) { show(); }
+      setTimeout(show, 250);   // never leave the old copy frozen on screen
     }
 
-    function watch() {
+    function onFrame(v, meta) {
+      if (v !== front || !v.duration || !isFinite(v.duration)) return;
+      var left = v.duration - meta.mediaTime;
+      if (!warmedForEnd && left <= 1.5) { warmedForEnd = true; warm(back); }
+      if (left <= 0.075) swap();
+    }
+    function loopFrames(v) {
+      var cb = function (now, meta) { onFrame(v, meta); v.requestVideoFrameCallback(cb); };
+      v.requestVideoFrameCallback(cb);
+    }
+    function onTime() {   // no rVFC: the older, coarser check
       var v = front;
       if (!v.duration || !isFinite(v.duration)) return;
       if (v.duration - v.currentTime <= 0.4) swap();
     }
+    function onEnded() { if (this === front) swap(); }
 
-    a.addEventListener('timeupdate', watch);
-    b.addEventListener('timeupdate', watch);
+    if (hasRVFC) { loopFrames(a); loopFrames(b); }
+    else { a.addEventListener('timeupdate', onTime); b.addEventListener('timeupdate', onTime); }
+    a.addEventListener('ended', onEnded);
+    b.addEventListener('ended', onEnded);
 
+    arm(b);
     var p0 = a.play();
     if (p0 && p0.catch) { p0.catch(function () {}); }
   }
