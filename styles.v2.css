@@ -1155,15 +1155,16 @@ section { position: relative; }
    is matched to the BRCGS mark by height so it is not the subordinate of the
    two, which FSC's guide asks for on size and placement.
 
-   TODO: FSC's promotional rules also want the licence code (FSC(R) C######)
-   alongside the mark. Awaiting it from the client; add it as a .foot__fsc-code
-   span next to this image. */
+   FSC's promotional rules also want the licence code alongside the mark, so
+   it sits directly beneath, in the same tracked style as the badge captions. */
+.foot__fsc-block { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; flex: none; }
 .foot__fsc {
   display: block;
   width: auto;
   height: clamp(63.5px, 6.05vw, 81.7px);
   flex: none;
 }
+.foot__fsc-code { font-size: 0.62rem; letter-spacing: 0.12em; white-space: nowrap; color: var(--pale); }
 
 /* --------------------------------------------------------------- utils -- */
 
