@@ -1172,6 +1172,26 @@ section { position: relative; }
 }
 .foot__fsc-code { font-size: 0.62rem; letter-spacing: 0.12em; white-space: nowrap; color: var(--pale); }
 
+/* FSC promotional panel, variant A. Proportions follow the guide's own
+   rendering: a rounded FSC-green box carrying the logo, the web address and
+   the licence code, with the strapline beneath in the same green. Set in a
+   plain sans like the original, not the site's brand face. Sized so every
+   element is legible, which the guide requires. */
+.fsc-panel { margin: 2rem 0 0; display: inline-flex; flex-direction: column; align-items: center; }
+.fsc-panel__box {
+  width: 160px; box-sizing: border-box; padding: 14px 12px 11px;
+  background: #285C4D; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: Arial, Helvetica, sans-serif; color: #fff; text-align: center;
+}
+.fsc-panel__box img { display: block; width: auto; height: 112px; }
+.fsc-panel__url  { margin-top: 3px; font-size: 12px; line-height: 1.2; letter-spacing: 0.01em; }
+.fsc-panel__code { margin-top: 8px; font-size: 12px; line-height: 1.2; font-weight: 700; }
+.fsc-panel__strap {
+  margin-top: 9px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px; line-height: 1.25;
+  font-weight: 700; color: #285C4D; text-align: center;
+}
+
 /* Trademark symbol: superscript without pushing the line apart. */
 sup.reg { font-size: 0.6em; line-height: 0; vertical-align: super; }
 
