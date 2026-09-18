@@ -1157,9 +1157,13 @@ section { position: relative; }
 
    FSC's promotional rules also want the licence code alongside the mark, so
    it sits directly beneath, in the same tracked style as the badge captions. */
-/* FSC permits the white mark only on a black ground, not floating on a colour,
-   so it sits on its own black tile until the promotional panel artwork arrives. */
-.foot__fsc-block { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; flex: none; background: #000; padding: 0.4rem 0.7rem 0.35rem; }
+/* The white mark on an FSC-green tile, which is the guide's own example of a
+   correct coloured background (p17). The green is sampled from the guide's
+   promotional-panel artwork. Clear space around the mark is the height of
+   the FSC initials (p16), about a fifth of the mark's height; the padding
+   provides it. The tile is not the promotional panel, which must come from
+   FSC's Trademark Portal with the licence code set. */
+.foot__fsc-block { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; flex: none; background: #285C4D; padding: 0.6rem 0.9rem 0.45rem; }
 .foot__fsc {
   display: block;
   width: auto;
