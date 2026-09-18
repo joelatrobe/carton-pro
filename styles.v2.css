@@ -1140,60 +1140,23 @@ section { position: relative; }
    ask for, scaled with the mark rather than fixed, so nothing crowds it at
    any width. Aspect ratio is pinned by the intrinsic width and height on the
    element, since the guidelines also forbid stretching it. */
+/* The FSC promotional panel in the footer, variant A on its own white tile,
+   the same way the BRCGS mark carries its white ground. Kept apart from the
+   BRCGS mark, since neither scheme allows the two to read as one lockup, and
+   sized so the FSC panel is never the smaller of the two, which FSC's guide
+   requires when other schemes' marks share the material. */
+.fsc-panel--foot { margin: 0; background: #fff; padding: 8px 10px 7px; border-radius: 4px; }
+.fsc-panel--foot .fsc-panel__box { width: 112px; padding: 10px 8px 8px; border-radius: 9px; }
+.fsc-panel--foot .fsc-panel__box img { height: 72px; }
+.fsc-panel--foot .fsc-panel__url  { margin-top: 2px; font-size: 9.5px; }
+.fsc-panel--foot .fsc-panel__code { margin-top: 5px; font-size: 9.5px; }
+.fsc-panel--foot .fsc-panel__strap { margin-top: 6px; font-size: 9.5px; }
+/* BRCGS mark on its white ground, its tile matched in height to the FSC
+   panel's box so neither scheme's mark is the smaller. */
 .foot__brcgs {
-  display: block;
-  width: clamp(84px, 8vw, 108px);
-  height: auto;
-  background: var(--white);
-  padding: clamp(0.5rem, 0.8vw, 0.7rem);
-  box-sizing: content-box;
-  flex: none;
+  display: block; width: auto; height: 127px; box-sizing: border-box;
+  background: var(--white); padding: 0.55rem; flex: none;
 }
-/* Kept clearly apart from the BRCGS mark: neither scheme's guidelines permit
-   the marks to be combined or read as one lockup. FSC permits green, black and
-   white, so the white artwork sits straight on the navy with no tile, and it
-   is matched to the BRCGS mark by height so it is not the subordinate of the
-   two, which FSC's guide asks for on size and placement.
-
-   FSC's promotional rules also want the licence code alongside the mark, so
-   it sits directly beneath, in the same tracked style as the badge captions. */
-/* The white mark on an FSC-green tile, which is the guide's own example of a
-   correct coloured background (p17). The green is sampled from the guide's
-   promotional-panel artwork. Clear space around the mark is the height of
-   the FSC initials (p16), about a fifth of the mark's height; the padding
-   provides it. The tile is not the promotional panel, which must come from
-   FSC's Trademark Portal with the licence code set. */
-.foot__fsc-block { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; flex: none; background: #285C4D; padding: 0.6rem 0.9rem 0.45rem; }
-.foot__fsc {
-  display: block;
-  width: auto;
-  height: clamp(50px, 4.9vw, 64px);   /* tile plus caption then sit level with the BRCGS tile */
-  flex: none;
-}
-.foot__fsc-code { font-size: 0.62rem; letter-spacing: 0.12em; white-space: nowrap; color: var(--pale); }
-
-/* FSC promotional panel, variant A. Proportions follow the guide's own
-   rendering: a rounded FSC-green box carrying the logo, the web address and
-   the licence code, with the strapline beneath in the same green. Set in a
-   plain sans like the original, not the site's brand face. Sized so every
-   element is legible, which the guide requires. */
-.fsc-panel { margin: 2rem 0 0; display: inline-flex; flex-direction: column; align-items: center; }
-.fsc-panel__box {
-  width: 160px; box-sizing: border-box; padding: 14px 12px 11px;
-  background: #285C4D; border-radius: 12px;
-  display: flex; flex-direction: column; align-items: center;
-  font-family: Arial, Helvetica, sans-serif; color: #fff; text-align: center;
-}
-.fsc-panel__box img { display: block; width: auto; height: 112px; }
-.fsc-panel__url  { margin-top: 3px; font-size: 12px; line-height: 1.2; letter-spacing: 0.01em; }
-.fsc-panel__code { margin-top: 8px; font-size: 12px; line-height: 1.2; font-weight: 700; }
-.fsc-panel__strap {
-  margin-top: 9px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px; line-height: 1.25;
-  font-weight: 700; color: #285C4D; text-align: center;
-}
-
-/* Trademark symbol: superscript without pushing the line apart. */
-sup.reg { font-size: 0.6em; line-height: 0; vertical-align: super; }
 
 /* --------------------------------------------------------------- utils -- */
 
