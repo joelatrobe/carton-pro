@@ -1140,6 +1140,27 @@ section { position: relative; }
    ask for, scaled with the mark rather than fixed, so nothing crowds it at
    any width. Aspect ratio is pinned by the intrinsic width and height on the
    element, since the guidelines also forbid stretching it. */
+/* FSC promotional panel, variant A. Proportions follow the guide's own
+   rendering: a rounded FSC-green box carrying the logo, the web address and
+   the licence code, with the strapline beneath in the same green. Set in a
+   plain sans like the original, not the site's brand face. Sized so every
+   element is legible, which the guide requires. */
+.fsc-panel { margin: 2rem 0 0; display: inline-flex; flex-direction: column; align-items: center; }
+.fsc-panel__box {
+  width: 160px; box-sizing: border-box; padding: 14px 12px 11px;
+  background: #285C4D; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: Arial, Helvetica, sans-serif; color: #fff; text-align: center;
+  letter-spacing: 0; text-transform: none;
+}
+.fsc-panel__box img { display: block; width: auto; height: 112px; }
+.fsc-panel__url  { margin-top: 3px; font-size: 12px; line-height: 1.2; }
+.fsc-panel__code { margin-top: 8px; font-size: 12px; line-height: 1.2; font-weight: 700; }
+.fsc-panel__strap {
+  margin-top: 9px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px; line-height: 1.25;
+  font-weight: 700; color: #285C4D; text-align: center; letter-spacing: 0; text-transform: none;
+}
+
 /* The FSC promotional panel in the footer, variant A on its own white tile,
    the same way the BRCGS mark carries its white ground. Kept apart from the
    BRCGS mark, since neither scheme allows the two to read as one lockup, and
